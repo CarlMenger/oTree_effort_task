@@ -1,0 +1,25 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block content %}
+
+
+    <table class="table">
+        <tr>
+            <td>Your score this round:</td>
+            <td>Points: {{ player.point_score}} </td>
+            {% if round_number == 2 %}
+            <td>Your opponent scored: {{player.other_player_score}} </td>
+    </table>
+
+
+
+
+    {% next_button %}
+{% endblock %}
+
+

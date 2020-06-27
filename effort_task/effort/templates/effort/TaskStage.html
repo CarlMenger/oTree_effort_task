@@ -1,0 +1,43 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Page title
+{% endblock %}
+
+
+{% block content %}
+
+    <p> Press "a" then "b" repeatedly </p>
+
+	<p>Points: <span id="points">0</span></p>
+    <p>Bonus Amount: <span id="bonus"></span> cents<p>
+
+    <input type="hidden" name="point_score" value="0" id="score"/>
+
+<script>
+  const target = document.getElementById("points");
+  const btarget = document.getElementById("bonus");
+
+
+  var points = 0, x, bonus = 0;
+
+  document.addEventListener("keydown", function(event) {
+      if(event.key === "a" || event.key === "A") x = true;
+      if(event.key === "b" || event.key === "B") {
+          if(!x) return;
+          target.textContent = ++points;
+          btarget.textContent = {{player.piece_rate}} * (points/100);
+          x = false;
+      }
+
+  document.getElementById("score").value = points;
+  });
+
+
+</script>
+
+    {% next_button %}
+
+{% endblock %}
+

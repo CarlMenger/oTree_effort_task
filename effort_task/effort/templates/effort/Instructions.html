@@ -1,0 +1,24 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    <b>Instructions</b>
+{% endblock %}
+
+{% block content %}
+<div>
+
+    In the next screen, you will be presented with a task. This task will require you to press two
+    keyboard keys repeatedly in altering sequence (a,b,a,b,a,b,a,b,a,b,a,b,.. etc. ). Every correct
+    combination of two strokes earns you some money.
+
+    After everyone is ready and has pressed the READY button, you will be directed to the next page,
+    and after brief countdown you will begin the task. Good luck.
+
+</div>
+<br>
+
+    {% next_button %}
+{% endblock %}
+
+
