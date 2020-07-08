@@ -13,7 +13,7 @@ SESSION_CONFIGS = [
      dict(
         name="effort_task",
         display_name="Experiment",
-        num_demo_participants=2,
+        num_demo_participants=4,
         app_sequence=['effort'],
      ),
 ]

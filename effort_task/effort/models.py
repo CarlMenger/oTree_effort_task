@@ -40,6 +40,9 @@ class Subsession(BaseSubsession):
     def point_score_everyone(self):
         return [p.point_score for p in self.get_players()]
 
+    def show_player_matrix(self):
+        return self.get_group_matrix()
+
     def create_group_matrix(self):
         # find if starting from index 0 or 1 gives less average differences between pairs
         def pairing_algorithm(scores_all):
@@ -56,29 +59,32 @@ class Subsession(BaseSubsession):
             print(pair_combinations[1])
             return pair_combinations[mean_differences.index(min(mean_differences))]
 
-        # FIXME: pair the leftover subjects
-        #points_ids --> dict of id:points, point_matrix --> list of list of points (same as group_matrix)
+        # FIXME: pair the leftover subjects if even num_subjects
+        # points_ids --> dict of id:points, point_matrix --> list of list of points (same as group_matrix)
         def convert_points_to_ids(points_ids, point_matrix):
-            id_matrix = copy.deepcopy(point_matrix)
+            # id_matrix = copy.deepcopy(point_matrix)
             for group_index in range(len(point_matrix)):
                 for point_index in range(len(point_matrix[group_index])):
-                    id_matrix[group_index][point_index] = points_ids.pop(point_matrix[group_index][point_index], -1)
-            return id_matrix
+                    point_matrix[group_index][point_index] = points_ids.pop(point_matrix[group_index][point_index], -1)
+            return point_matrix
 
         def create_point_ids(points_all):
             return dict(list(enumerate(points_all, start=1)))
 
-        points_all = self.point_score_everyone
+        def reverse_keys_values(dictionary):
+            return dict((v, k) for k, v in dictionary.items())
+
+        points_all = self.point_score_everyone()
         point_matrix = pairing_algorithm(sorted(points_all))
-        points_ids = create_point_ids(points_all)
-        # FIXME: return this to original state
-        output = convert_points_to_ids(points_ids, point_matrix)
-        logging.info(f"group_matrix is : {output}")
-        return output
-        #return convert_points_to_ids(points_ids, point_matrix)
+        reverse_points_ids = create_point_ids(points_all)
+        points_ids = reverse_keys_values(reverse_points_ids)
+
+        return convert_points_to_ids(points_ids, point_matrix)
 
     def group_based_on_score(self):
-        self.set_group_matrix(self.create_group_matrix())
+        if self.round_number == 1:  # regrouping limited to first game
+            output = self.create_group_matrix()
+            self.set_group_matrix(output)
 
 
 class Group(BaseGroup):

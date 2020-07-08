@@ -29,19 +29,19 @@ class TaskStage(Page):
     #    scores_all = self.subsession.point_score_everyone() #FIXME: Useless
 
 
-class TaskStageWaitPage(WaitPage):
+class GroupingWaitPage(WaitPage):
     wait_for_all_groups = True
     after_all_players_arrive = "group_based_on_score"
-    pass
 
+class TaskStageWaitPage(WaitPage):
+    wait_for_all_groups = True
 
 class Results(Page):
     form_model = "player"
 
 
 class ResultsWaitPage(WaitPage):
-    def after_all_players_arrive(self): # Is this working ?
-        pass
+    pass
 
 
 class FinalResults(Page):
@@ -54,6 +54,6 @@ class FinalResults(Page):
 
 
 
-page_sequence = [Instructions, InstructionsWaitPage, TaskStage, ResultsWaitPage, Results, FinalResults]
+page_sequence = [Instructions, InstructionsWaitPage, TaskStage, TaskStageWaitPage, Results, FinalResults]
 
 
