@@ -13,15 +13,26 @@ class Instructions(Page):
         return self.round_number == 1
 
 
+class InstructionsWaitPage(WaitPage):
+    wait_for_all_groups = True
+
+
 class TaskStage(Page):
     form_model = "player"
     form_fields = ["point_score"]
+    #timeout_seconds = 35 #FIXME: no hardcoding
 
-    def before_next_page(self):
-        if self.round_number == 1:
-            point_score_everyone = [p.point_score for p in self.get_players()].sort()
+    def get_timeout_seconds(self):
+        return self.player.task_stage_timeout_seconds
+
+    #def before_next_page(self):
+    #    scores_all = self.subsession.point_score_everyone() #FIXME: Useless
 
 
+class TaskStageWaitPage(WaitPage):
+    wait_for_all_groups = True
+    after_all_players_arrive = "group_based_on_score"
+    pass
 
 
 class Results(Page):
@@ -29,7 +40,7 @@ class Results(Page):
 
 
 class ResultsWaitPage(WaitPage):
-    def after_all_players_arrive(self):
+    def after_all_players_arrive(self): # Is this working ?
         pass
 
 
@@ -43,6 +54,6 @@ class FinalResults(Page):
 
 
 
-page_sequence = [Instructions, TaskStage, Results, FinalResults]
+page_sequence = [Instructions, InstructionsWaitPage, TaskStage, ResultsWaitPage, Results, FinalResults]
 
 
