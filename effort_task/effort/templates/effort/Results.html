@@ -12,8 +12,9 @@
         <tr>
             <td>Your score this round:</td>
             <td>Points: {{ player.point_score}} </td>
-            {% if player.round_number == 2 %}
-            <td>Your opponent has scored: {{player.other_player_score}} </td>
+            {% if player.round_number != 1 %}
+            <td>DEBUG: {{player.other_player_score}} </td>
+             <td>{{score_position}} </td>
             {% endif %}
     </table>
 
@@ -21,10 +22,10 @@
         <tr>
             <td>All players score</td>
             <td>{{ subsession.point_score_everyone}}</td>
+            <td>{{ player.other_player_score}}</td>
             <td>{{ subsession.create_group_matrix}}</td>
-
-
     </table>
+
     {% next_button %}
 {% endblock %}
 
