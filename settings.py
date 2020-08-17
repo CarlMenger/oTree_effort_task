@@ -11,8 +11,8 @@ SESSION_CONFIG_DEFAULTS = dict(
 
 SESSION_CONFIGS = [
      dict(
-        name="effort_task",
-        display_name="Experiment",
+        name="effort_task_demo",
+        display_name="Experiment_demo",
         num_demo_participants=2,
         app_sequence=['effort'],
      ),
@@ -27,12 +27,18 @@ LANGUAGE_CODE = "en"
 REAL_WORLD_CURRENCY_CODE = "USD"
 USE_POINTS = True
 
-ROOMS = []
-
+ROOMS = [
+    dict(
+        name='effort_room_demo',
+        display_name='Effort_room_test',
+        #participant_label_file='_rooms/econ101.txt',
+        use_secure_urls=False
+    ),
+]
+OTREE_AUTH_LEVEL = "STUDY"
 ADMIN_USERNAME = "admin"
 # for security, best to set admin password in an environment variable
-ADMIN_PASSWORD = "ztreesucks"
-    #environ.get("OTREE_ADMIN_PASSWORD")
+ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")
 
 DEMO_PAGE_INTRO_HTML = """ """
 
