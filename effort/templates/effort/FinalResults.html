@@ -2,14 +2,16 @@
 {% load otree static %}
 
 {% block title %}
-    Results
+    Final Results
 {% endblock %}
 
 {% block content %}
     <table class="table">
         <tr>
             <td>Your total payoff this session:</td>
-            <td>{{participant.payoff}}
+            <td>{{participant.payoff}}</td>
+
+
         </tr>
     </table>
     {% next_button %}
