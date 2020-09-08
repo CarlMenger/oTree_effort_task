@@ -13,7 +13,7 @@ import logging
 import time
 
 logging.basicConfig(level=logging.DEBUG,
-                    filename="example2.log",
+                    filename="debug_log.log",
                     format='%(asctime)s %(message)s')
 
 
@@ -29,11 +29,8 @@ class Constants(BaseConstants):
     players_per_group = None
     num_rounds = 3
     grouping_order_keywords = {
-        "score_ahead_high": "You are significantly ahead in score compared to the other player in the group",
-        "score_ahead_low": "You are slightly ahead in score compared to the other player in the group",
-        "score_equal": "You have the same score compared to the other player in the group",
-        "score_behind_low": "You are slightly behind in score compared to the other player in the group",
-        "score_behind_high": "You are significantly behind in score compared to the other player in the group",
+        "score_ahead": "You are slightly ahead in score compared to the other player in your group",
+        "score_behind": "You are slightly behind in score compared to the other player in your group",
     }
 
 
@@ -50,17 +47,24 @@ class Subsession(BaseSubsession):
 
     def create_record_files(self):
         def get_records():
-            records = ([[player.point_score for player in player.in_all_rounds()] for player in
-                    self.get_players()])
-            print(records)
-            records_df = pandas.DataFrame(records)
-            records_df.to_csv("score_records.csv")
+            treatment = self.session.config["treatment"]
+            timestr = time.strftime("%Y_%m_%d-%H_%M")
+            file_dir = self.session.config["file_dir"]
+            records = [treatment, *[[player.point_score for player in player.in_all_rounds()] for player in
+                        self.get_players()]]
+            logging.debug(F"records: {records}")
+            pandas.DataFrame(records, columns=["treatment", *[f"Round_{round}" for round in range(Constants.num_rounds)],
+                                               ]).to_csv(
+                f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
 
         def get_payfile():
+            timestr = time.strftime("%Y_%m_%d-%H_%M")
+            file_dir = self.session.config["file_dir"]
             payfile = [player.get_payoff() for player in self.get_players()]
-            print(payfile)
-            payfile_df = pandas.DataFrame(payfile)
-            payfile_df.to_csv("payfile.txt")
+
+            payfile_df = pandas.DataFrame(payfile, columns=[
+                "Payment"])  # FIXME might need exeption if #n of colums is different from #n of arguments
+            payfile_df.to_csv( f"{file_dir}\\payfile_{timestr}.txt")
 
         get_records()
         get_payfile()
@@ -72,7 +76,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     point_score = models.PositiveIntegerField(initial=0)
-    piece_rate = models.IntegerField(initial=8)
+    piece_rate = models.IntegerField(initial=8)  #TODO: Used anywhere ?
     task_stage_timeout_seconds = models.IntegerField(initial=35)
 
     def other_player_score(self):
@@ -86,5 +90,10 @@ class Player(BasePlayer):
         return self.participant.label
 
     def get_payoff(self):
-        return sum([player_in_all_rounds.point_score for player_in_all_rounds in self.in_rounds(2, 3)]) * \
-               self.session.config["conversion_rate"] + self.session.config["participation_fee"]
+        return sum([score_in_all_rounds.point_score for score_in_all_rounds in self.in_rounds(2, 3)]) * \
+               self.session.config["conversion_rate"] + self.session.config["participation_fee"] + \
+               self.session.config["winning_bonus"]
+
+
+
+# TODO: get_payoff need winning bonus

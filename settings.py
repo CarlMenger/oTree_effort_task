@@ -11,23 +11,36 @@ SESSION_CONFIG_DEFAULTS = dict(
 )
 
 SESSION_CONFIGS = [
-     dict(
-        name="effort_task_demo_1",
-        display_name="Experiment_demo",
+    dict(
+        name="effort_task_treatment_1",
+        display_name="Effort_task_T1_noInfo",
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment="0",
         participation_fee=50,
         conversion_rate=0.50,
-     ),
+        winning_bonus=50,
+        file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps"
+    ),
     dict(
-        name="effort_task_demo_2",
-        display_name="Experiment_demo_2",
+        name="effort_task_treatment_2",
+        display_name="Effort_task_T2_oneWayInfo",
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment="1",
-        conversion_rate=0.50
-
+        participation_fee=50,
+        conversion_rate=0.50,
+        winning_bonus=50,
+    ),
+    dict(
+        name="effort_task_treatment_3",
+        display_name="Effort_task_T3_bothWayInfo",
+        num_demo_participants=2,
+        app_sequence=['effort'],
+        treatment="2",
+        participation_fee=50,
+        conversion_rate=0.50,
+        winning_bonus=50,
     ),
 ]
 
@@ -42,7 +55,7 @@ USE_POINTS = True
 
 ROOMS = [
     dict(
-        name='effort_room_demo',
+        name='effort_task_treatment_1',
         display_name='Effort_room_test',
         participant_label_file='_rooms/participant_label_file.txt',
         use_secure_urls=False

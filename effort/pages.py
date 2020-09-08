@@ -47,6 +47,8 @@ class ResultsWaitPage(WaitPage):
 
 
 class GenerateFiles(WaitPage):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds
     wait_for_all_groups = True  # this makes after_all_players_arrive look in subsession class
     after_all_players_arrive = "create_record_files"
 
