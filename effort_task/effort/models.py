@@ -8,11 +8,14 @@ from otree.api import (
     Currency as c,
     currency_range,
 )
-import copy
+import pandas
 import logging
-logging.basicConfig(level=logging.DEBUG,
-                    filename="example2.log",
-                    format='%(asctime)s %(message)s')
+import time
+
+logging.basicConfig(level=logging.ERROR,
+                    filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.log",
+                    format='%(asctime)s %(message)s'
+                    )
 
 
 author = "Carl_Menger"
@@ -25,69 +28,57 @@ Separate players based on real effort task into group competing against each oth
 class Constants(BaseConstants):
     name_in_url = "StopLookingAtUrl"
     players_per_group = None
-    num_rounds = 2
+    num_rounds = 3
     grouping_order_keywords = {
-        "score_ahead_high": "You are significantly ahead in score compared to the other player in the group",
-        "score_ahead_low": "You are slightly ahead in score compared to the other player in the group",
-        "score_equal": "You have the same score compared to the other player in the group",
-        "score_behind_low": "You are slightly behind in score compared to the other player in the group",
-        "score_behind_high": "You are significantly behind in score compared to the other player in the group",
+        "score_ahead": "You are slightly ahead in score compared to the other player in your group",
+        "score_behind": "You are slightly behind in score compared to the other player in your group",
     }
-    # TaskStage variables
 
-    def countdown_timer(self):
-        return 5
-
-    score_position_bound = 0.2# 0.2 == 20 % difference
 
 class Subsession(BaseSubsession):
+
     def point_score_everyone(self):
         return [p.point_score for p in self.get_players()]
 
     def show_player_matrix(self):
         return self.get_group_matrix()
 
-    def create_group_matrix(self):
-        # find if starting from index 0 or 1 gives less average differences between pairs
-        def pairing_algorithm(scores_all):
-            pair_combinations = []
-            for index in range(0, len(scores_all), 2):
-                try:
-                    pair_combinations.append([scores_all[index], scores_all[index + 1]])
-                except IndexError:
-                    # except is point pairing if uneven players, adding second highest score to be paired with 3rd and 1 st
-                    pair_combinations.append([scores_all[index], scores_all[index - 1]])
+    def calculate_payoff_table(self):
+        pass
 
-            return pair_combinations
+    def create_record_files(self):
+        def get_records():
+            timestr = time.strftime("%Y_%m_%d-%H_%M")
+            file_dir = self.session.config["file_dir"]
+            treatment = self.session.config["treatment"]
 
-        # add ids to point matrix
-        def create_point_ids(points_all):
-            return dict(enumerate(points_all, start=1))
+            # data lists
+            scores_of_players = [[player.point_score for player in player.in_all_rounds()] for player in
+                        self.get_players()]
+            treatment_list = [treatment for _ in range(len(scores_of_players))]
+            scores_of_players = [list(points) for points in zip(*scores_of_players)]
 
-        # points_ids --> dict of id:points, point_matrix --> list of list of points (same as group_matrix)
-        def convert_points_to_ids(points_ids, point_matrix):
-            for group_index in range(len(point_matrix)):
-                for point_index in range(len(point_matrix[group_index])):
-                    value = point_matrix[group_index][point_index]
-                    try:
-                        key = (list(points_ids.keys())[list(points_ids.values()).index(value)])
-                        point_matrix[group_index][point_index] = key
-                        points_ids.pop(key, -999)
-                    except ValueError:
-                        # if uneven players, point matrix has one more element than ids, uses last
-                        point_matrix[group_index][point_index] = point_matrix[group_index - 1][point_index]
-            return point_matrix
 
-        points_all = self.point_score_everyone()
-        point_matrix = pairing_algorithm(sorted(points_all))
-        points_ids = create_point_ids(points_all)
-        new_group_matrix = convert_points_to_ids(points_ids, point_matrix)
-        return new_group_matrix
+            # format data for pandas
+            raw_data = dict(treatment=treatment_list,
+                            round_0=scores_of_players[0],
+                            round_1=scores_of_players[1],
+                            round_2=scores_of_players[2],
+                            )
+            print(raw_data)
+            # csv generation
+            pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
 
-    def group_based_on_score(self):
-        if self.round_number == 1:  # regrouping limited to first game
-            output = self.create_group_matrix()
-            self.set_group_matrix(output)
+        def get_payfile():
+            timestr = time.strftime("%Y_%m_%d-%H_%M")
+            file_dir = self.session.config["file_dir"]
+            payments = [player.get_payoff() for player in self.get_players()]
+            payfile_data = dict(payment=payments)
+            # txt generation
+            pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt")
+
+        get_records()
+        get_payfile()
 
 
 class Group(BaseGroup):
@@ -96,30 +87,24 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     point_score = models.PositiveIntegerField(initial=0)
-    piece_rate = models.IntegerField(initial=8)
+    winning = models.BooleanField()
     task_stage_timeout_seconds = models.IntegerField(initial=35)
 
     def other_player_score(self):
-        return self.get_others_in_group()[0].point_score
+        pass
+        #TODO
 
     def player_point_score(self):
         return self.point_score
 
-    def get_score_position(self):
-        other_player_score = self.other_player_score()
-        try:
-            score_difference = (other_player_score - self.point_score) /\
-                           (self.point_score + other_player_score / 2)
-        except ZeroDivisionError:
-            score_difference = 0
+    def participant_label(self):
+        return self.participant.label
 
-        if score_difference >= Constants.score_position_bound:
-            return Constants.grouping_order_keywords["score_ahead_high"]
-        elif 0.2 > score_difference > 0:
-            return Constants.grouping_order_keywords["score_ahead_low"]
-        elif score_difference == 0:
-            return Constants.grouping_order_keywords["score_equal"]
-        elif 0 > score_difference > - Constants.score_position_bound:
-            return Constants.grouping_order_keywords["score_behind_low"]
-        elif - 0.2 >= score_difference:
-            return Constants.grouping_order_keywords["score_behind_high"]
+    def get_payoff(self):
+        return sum([score_in_all_rounds.point_score for score_in_all_rounds in self.in_rounds(2, 3)]) * \
+               self.session.config["conversion_rate"] + self.session.config["participation_fee"] + \
+               self.session.config["winning_bonus"]
+
+
+
+# TODO: get_payoff need winning bonus
