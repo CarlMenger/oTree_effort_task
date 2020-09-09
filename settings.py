@@ -1,47 +1,21 @@
 from os import environ
 
-
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
 # the session config can be accessed from methods in your apps as self.session.config,
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=False, conversion_rate=0.50,
+    real_world_currency_per_point=1.00, participation_fee=50.00, doc=""
 )
 
 SESSION_CONFIGS = [
-    dict(
-        name="effort_task_treatment_1",
-        display_name="Effort_task_T1_noInfo",
+     dict(
+        name="effort_task",
+        display_name="Experiment",
         num_demo_participants=2,
         app_sequence=['effort'],
-        treatment="0",
-        participation_fee=50,
-        conversion_rate=0.50,
-        winning_bonus=50,
-        file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps"
-    ),
-    dict(
-        name="effort_task_treatment_2",
-        display_name="Effort_task_T2_oneWayInfo",
-        num_demo_participants=2,
-        app_sequence=['effort'],
-        treatment="1",
-        participation_fee=50,
-        conversion_rate=0.50,
-        winning_bonus=50,
-    ),
-    dict(
-        name="effort_task_treatment_3",
-        display_name="Effort_task_T3_bothWayInfo",
-        num_demo_participants=2,
-        app_sequence=['effort'],
-        treatment="2",
-        participation_fee=50,
-        conversion_rate=0.50,
-        winning_bonus=50,
-    ),
+     ),
 ]
 
 
@@ -50,18 +24,11 @@ SESSION_CONFIGS = [
 LANGUAGE_CODE = "en"
 
 # e.g. EUR, GBP, CNY, JPY
-REAL_WORLD_CURRENCY_CODE = "CZK"
+REAL_WORLD_CURRENCY_CODE = "USD"
 USE_POINTS = True
 
-ROOMS = [
-    dict(
-        name='effort_task_treatment_1',
-        display_name='Effort_room_test',
-        participant_label_file='_rooms/participant_label_file.txt',
-        use_secure_urls=False
-    ),
-]
-OTREE_AUTH_LEVEL = "STUDY"
+ROOMS = []
+
 ADMIN_USERNAME = "admin"
 # for security, best to set admin password in an environment variable
 ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")

@@ -12,9 +12,10 @@ import pandas
 import logging
 import time
 
-logging.basicConfig(level=logging.DEBUG,
-                    filename="debug_log.log",
-                    format='%(asctime)s %(message)s')
+logging.basicConfig(level=logging.ERROR,
+                    filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.log",
+                    format='%(asctime)s %(message)s'
+                    )
 
 
 author = "Carl_Menger"
@@ -47,24 +48,34 @@ class Subsession(BaseSubsession):
 
     def create_record_files(self):
         def get_records():
-            treatment = self.session.config["treatment"]
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
-            records = [treatment, *[[player.point_score for player in player.in_all_rounds()] for player in
-                        self.get_players()]]
-            logging.debug(F"records: {records}")
-            pandas.DataFrame(records, columns=["treatment", *[f"Round_{round}" for round in range(Constants.num_rounds)],
-                                               ]).to_csv(
-                f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
+            treatment = self.session.config["treatment"]
+
+            # data lists
+            scores_of_players = [[player.point_score for player in player.in_all_rounds()] for player in
+                        self.get_players()]
+            treatment_list = [treatment for _ in range(len(scores_of_players))]
+            scores_of_players = [list(points) for points in zip(*scores_of_players)]
+
+
+            # format data for pandas
+            raw_data = dict(treatment=treatment_list,
+                            round_0=scores_of_players[0],
+                            round_1=scores_of_players[1],
+                            round_2=scores_of_players[2],
+                            )
+            print(raw_data)
+            # csv generation
+            pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
 
         def get_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
-            payfile = [player.get_payoff() for player in self.get_players()]
-
-            payfile_df = pandas.DataFrame(payfile, columns=[
-                "Payment"])  # FIXME might need exeption if #n of colums is different from #n of arguments
-            payfile_df.to_csv( f"{file_dir}\\payfile_{timestr}.txt")
+            payments = [player.get_payoff() for player in self.get_players()]
+            payfile_data = dict(payment=payments)
+            # txt generation
+            pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt")
 
         get_records()
         get_payfile()
@@ -76,7 +87,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     point_score = models.PositiveIntegerField(initial=0)
-    piece_rate = models.IntegerField(initial=8)  #TODO: Used anywhere ?
+    winning = models.BooleanField()
     task_stage_timeout_seconds = models.IntegerField(initial=35)
 
     def other_player_score(self):
