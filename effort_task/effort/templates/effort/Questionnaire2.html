@@ -1,0 +1,23 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+<b>Questionnaire</b>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <table class="table">
+        <tr>
+            <td>Please, select the number of the PC you are sitting at.</td>
+            <td>
+                {% formfield player.pc_name %}
+            </td>
+    </table>
+</div>
+
+<br>
+<button class="otree-btn-next btn btn-primary next-button otree-next-button"> Continue</button>
+{% endblock %}
+
