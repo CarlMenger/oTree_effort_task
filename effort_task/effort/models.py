@@ -27,6 +27,7 @@ Separate players based on real effort task into group competing against each oth
 
 class Constants(BaseConstants):
     name_in_url = "StopLookingAtUrl"
+
     players_per_group = 2
     num_rounds = 3
     score_info = {
@@ -42,6 +43,7 @@ class Constants(BaseConstants):
 class Subsession(BaseSubsession):
 
     # unused methods
+
     def point_score_everyone(self):
         return [p.point_score for p in self.get_players()]
 
@@ -73,6 +75,7 @@ class Subsession(BaseSubsession):
 
 
     # Create payfile.txt and Score_records.csv
+
     def create_record_files(self):
         def get_records():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
@@ -94,11 +97,14 @@ class Subsession(BaseSubsession):
                             )
             print(raw_data)
             # csv generation
-            #pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
+
+            pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
+
 
         def get_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
+
             # FIXME: redo this through the groups not players,
             payments = [player.get_player_endowment() for player in self.get_players()]
             pc_names = [player.pc_name for player in self.get_players()]
@@ -106,6 +112,7 @@ class Subsession(BaseSubsession):
                                 payment=payments,)
             # txt generation
             pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
+
 
         get_records()
         get_payfile()
@@ -117,7 +124,9 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     point_score = models.PositiveIntegerField(initial=0)
+
     winning = models.PositiveIntegerField(initial=0.0)
+
     task_stage_timeout_seconds = models.IntegerField(initial=35)
     gender = models.IntegerField(widget=widgets.RadioSelect,
                                  choices=[
@@ -151,6 +160,7 @@ class Player(BasePlayer):
 
     def participant_label(self):
         return self.participant.label
+
 
     # sum of points in paying rounds
     def get_player_total_points(self, first_round, last_round):
@@ -187,3 +197,4 @@ class Player(BasePlayer):
         self.player_2.player_total_points = player2_points
 
         # TODO: self.player_2 is bullshit
+
