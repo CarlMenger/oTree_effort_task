@@ -40,6 +40,8 @@ class Questionnaire2(Page):
 
 class InstructionsWaitPage(WaitPage):
     wait_for_all_groups = True
+    def is_displayed(self):
+        return self.round_number == 1
 
 
 class TaskStage(Page):

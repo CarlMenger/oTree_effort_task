@@ -99,7 +99,7 @@ class Subsession(BaseSubsession):
         def get_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
-            # FIXME: classic loop can replace multiple get_player() calls
+            # FIXME: redo this through the groups not players,
             payments = [player.get_player_endowment() for player in self.get_players()]
             pc_names = [player.pc_name for player in self.get_players()]
             payfile_data = dict(pc_name=pc_names,
@@ -168,7 +168,7 @@ class Player(BasePlayer):
             return payoff
 
     def determine_winner(self):
-        if self.session.config["Treatment"] == 0:
+        if self.session.config["treatment"] == 0:
             player1_points = self.get_player_total_points(2,3)
             player_2 = self.get_others_in_group()[0]
             player2_points = player_2.get_player_total_points(2,3)
@@ -186,5 +186,4 @@ class Player(BasePlayer):
             self.player_2.winning = 1
         self.player_2.player_total_points = player2_points
 
-
-# TODO: get_player_endowment need winning bonus
+        # TODO: self.player_2 is bullshit
