@@ -37,6 +37,7 @@ class Constants(BaseConstants):
     }
     pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]
     pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]
+
     date_time = time.asctime(time.localtime(time.time()))
 
 class Subsession(BaseSubsession):
@@ -199,6 +200,7 @@ class Player(BasePlayer):
 
     pc_name = models.IntegerField()
 
+
     def pc_name_choices(self):
         if self.room_name == 205:
             return Constants.pc_name_list_205
@@ -207,11 +209,13 @@ class Player(BasePlayer):
         else:
             return ["error"]
 
+
     def player_point_score(self):
         return self.point_score
 
     def participant_label(self):
         return self.participant.label
+
 
     # list of points in paying rounds x to y
     def get_player_point_score_in_rounds(self, first_round, last_round):
@@ -221,3 +225,4 @@ class Player(BasePlayer):
     def get_player_endowment(self):
         return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
             "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
+

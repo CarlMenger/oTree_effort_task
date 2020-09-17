@@ -9,6 +9,7 @@ from os import environ
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=False, conversion_rate=0.50,
     winning_bonus=50.00, file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps", waitPageTimeout=30,
+
 )
 
 SESSION_CONFIGS = [
@@ -54,6 +55,7 @@ ROOMS = [
         display_name='Effort_task_Both_Hanzlik',
         participant_label_file='_rooms/participant_label_file.txt',
         use_secure_urls=False,
+
     ),
 ]
 OTREE_AUTH_LEVEL = "STUDY"

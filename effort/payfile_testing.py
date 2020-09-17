@@ -9,6 +9,7 @@ scores_r2 = [random.randrange(0, 100) for _ in range(5)]
 scores_r3 = [random.randrange(0, 1000) for _ in range(5)]
 
 df = pd.DataFrame(list(zip(names, *[scores_r1, scores_r2, scores_r3])),
+
                   columns=["Name", "round1", "round2", "round3"], ).to_csv(
     "D:\__OTree\__DP - effort task\TestDataDumps\pandas_test.txt", sep="\t", )
 
