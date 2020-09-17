@@ -36,7 +36,7 @@ class Constants(BaseConstants):
         "far_behind": "You are slightly behind in score compared to the other player in your group",
     }
     pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]
-    pc_name__list_203 = [[i, f"VT_205 - {i}"] for i in range(1, 25)]
+    pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]
     date_time = time.asctime(time.localtime(time.time()))
 
 class Subsession(BaseSubsession):
@@ -72,45 +72,109 @@ class Subsession(BaseSubsession):
 
     # Create payfile.txt and Score_records.csv
     def create_record_files(self):
-        def get_records():
+
+        def create_score_records():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
             treatment = self.session.config["treatment"]
 
-            # data lists
-            scores_of_players = [[player.point_score for player in player.in_all_rounds()] for player in
-                        self.get_players()]
-            treatment_list = [treatment for _ in range(len(scores_of_players))]
-            scores_of_players = [list(points) for points in zip(*scores_of_players)]
+            # data lists # TODO more relaible version, where order of lines of code is not deteriminal to
+            # TODO headers
+            player_info = []
+            raw_data = []
+            for player in self.get_players():
+                player_info.append(timestr)
+                player_info.append(treatment)
+                player_info.append(player.in_round(1).room_name)
+                player_info.append(player.in_round(1).pc_name)
+                for round in player.get_player_point_score_in_rounds(1, 3):
+                    player_info.append(round)
+                player_info.append(player.in_round(1).gender)
+                player_info.append(player.winning) # TODO: win for all rounds
+                player_info.append(player.get_others_in_group()[0].room_name)
+                player_info.append(player.get_others_in_group()[0].pc_name)
+                raw_data.append(player_info)
+                player_info = []
 
+            columns = [list(column) for column in zip(*raw_data)]
 
             # format data for pandas
-            raw_data = dict(treatment=treatment_list,
-                            round_0=scores_of_players[0],
-                            round_1=scores_of_players[1],
-                            round_2=scores_of_players[2],
+            raw_data = dict(date=columns[0],
+                            treatment=columns[1],
+                            room_name=columns[2],
+                            pc_name=columns[3],
+                            round_0=columns[4],
+                            round_1=columns[5],
+                            round_2=columns[6],
+                            gender=columns[7],
+                            win=columns[8],
+                            other_player_room_name=columns[9],
+                            other_player_pc_name=columns[10],
                             )
             print(raw_data)
             # csv generation
-            #pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
+            pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
 
-        def get_payfile():
+        def create_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
-            # FIXME: redo this through the groups not players,
+            # FIXME: is payments ok ?
             payments = [player.get_player_endowment() for player in self.get_players()]
+            room_name = [player.room_name for player in self.get_players()]
+            winning = [player.winning for player in self.get_players()]
             pc_names = [player.pc_name for player in self.get_players()]
-            payfile_data = dict(pc_name=pc_names,
-                                payment=payments,)
+            gender = [player.gender for player in self.get_players()]
+
+            payfile_data = dict(room_name=room_name,
+                                pc_name=pc_names,
+                                gender=gender,
+                                payment=payments,
+                                has_won=winning,)
             # txt generation
             pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
 
-        get_records()
-        get_payfile()
+        [group.calculate_points_wins_payments() for group in self.get_groups()]
+        #calculate_points_wins_payments()
+        create_score_records()
+        create_payfile()
+
+
+    def determine_winner(self, player1_points, player2_points):
+        if player1_points > player2_points:
+            return [1.0,0.0]
+        elif player1_points < player2_points:
+            return [0.0, 1.0]
+        else:
+            return [0.5, 0.5]
 
 
 class Group(BaseGroup):
-    pass
+    def calculate_points_wins_payments(self):
+        # Load up players in this group
+        p1, p2 = self.get_players()
+
+        # Load point scores of players
+        p1_points = p1.get_player_point_score_in_rounds(2, 3)
+        p2_points = p2.get_player_point_score_in_rounds(2, 3)
+
+        # Write down total points to player attribute
+        p1.player_total_points = sum(p1_points)
+        p2.player_total_points = sum(p2_points)
+
+        if self.session.config["treatment"] == 0:
+            # feeds both last round points
+            results = self.subsession.determine_winner(sum(p1_points), sum(p2_points))
+        else:
+            # feeds only last round points
+            results = self.subsession.determine_winner(p1_points[1], p2_points[1])
+
+        # Write down wins/loses/stalemates
+        p1.winning = results[0]
+        p2.winning = results[1]
+
+        # Write down payments to player attribute # FIXME: rounding up to 5 kč ?
+        p1.player_payment = int(p1.get_player_endowment())
+        p2.player_payment = int(p2.get_player_endowment())
 
 
 class Player(BasePlayer):
@@ -129,20 +193,19 @@ class Player(BasePlayer):
                                     [205, " VT 205 "]
                                 ]
                                 )
+
+    player_total_points = models.IntegerField(initial=0)
+    player_payment = models.IntegerField(initial=0)
+
     pc_name = models.IntegerField()
-    player_total_points = models.IntegerField()
 
     def pc_name_choices(self):
         if self.room_name == 205:
             return Constants.pc_name_list_205
         elif self.room_name == 203:
-            return Constants.pc_name__list_203
+            return Constants.pc_name_list_203
         else:
             return ["error"]
-
-    def other_player_score(self):
-        pass
-        #TODO
 
     def player_point_score(self):
         return self.point_score
@@ -150,38 +213,11 @@ class Player(BasePlayer):
     def participant_label(self):
         return self.participant.label
 
-    # sum of points in paying rounds
-    def get_player_total_points(self, first_round, last_round):
-        return sum(
-            [score_in_paying_rounds.point_score for score_in_paying_rounds in self.in_rounds(first_round, last_round)])
+    # list of points in paying rounds x to y
+    def get_player_point_score_in_rounds(self, first_round, last_round):
+        return [score_in_paying_rounds.point_score for score_in_paying_rounds in
+                self.in_rounds(first_round, last_round)]
 
     def get_player_endowment(self):
-        if self.player_total_points:
-            return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
-                "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
-        else:
-            player_points = self.get_player_total_points(2, 3)
-            payoff = player_points * self.session.config["conversion_rate"] + self.session.config[
-                "participation_fee"] + int(self.session.config["winning_bonus"] * self.determine_winner())
-            return payoff
-
-    def determine_winner(self):
-        if self.session.config["treatment"] == 0:
-            player1_points = self.get_player_total_points(2,3)
-            player_2 = self.get_others_in_group()[0]
-            player2_points = player_2.get_player_total_points(2,3)
-        else:
-            player1_points = self.get_player_total_points(3, 3)
-            player2_points = 666 # TODO
-        if player1_points > player2_points:
-            self.winning = 1
-            self.player_2.winning = 0
-        elif player1_points == player2_points:
-            self.winning = 0.5
-            self.player_2.winning = 0.5
-        else:
-            self.winning = 0
-            self.player_2.winning = 1
-        self.player_2.player_total_points = player2_points
-
-        # TODO: self.player_2 is bullshit
+        return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
+            "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
