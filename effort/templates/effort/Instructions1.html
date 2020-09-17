@@ -1,0 +1,28 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    <b>Instructions</b>
+{% endblock %}
+
+{% block content %}
+<div>
+
+    In the next screen, you will be presented with a task. This task will require you to repeatedly press two
+    keyboard keys in altering sequence (a,b,a,b,a,b,... etc. ). Every correct combination of two strokes earns
+    you small amount of money. You have 30 seconds to do as many combination as you can.
+
+    The first round is just a testing round for you to see the task at hand. You get no reward for this round.
+    However, every round after that is part of the study and will be used to determine your monetary reward at
+    the end of the experiment.
+
+    After everyone is ready and has pressed the I AM READY button, you will be directed to the next page,
+    and after brief countdown you will begin the task.
+
+
+</div>
+<br>
+    <button class="otree-btn-next btn btn-primary next-button otree-next-button"> I AM READY </button>
+{% endblock %}
+
+

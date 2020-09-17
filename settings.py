@@ -8,25 +8,33 @@ from os import environ
 
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=False, conversion_rate=0.50,
+    winning_bonus=50.00, file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps",
 )
 
 SESSION_CONFIGS = [
-     dict(
-        name="effort_task_demo_1",
-        display_name="Experiment_demo",
+    dict(
+        name="effort_task_treatment_0_control",
+        display_name="Effort_task_T0_noInfo_control",
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment="0",
-        participation_fee=50,
-        conversion_rate=0.50,
-     ),
+
+
+    ),
     dict(
-        name="effort_task_demo_2",
-        display_name="Experiment_demo_2",
+        name="effort_task_treatment_1",
+        display_name="Effort_task_T1_oneWayInfo",
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment="1",
-        conversion_rate=0.50
+
+    ),
+    dict(
+        name="effort_task_treatment_2",
+        display_name="Effort_task_T2_bothWayInfo",
+        num_demo_participants=2,
+        app_sequence=['effort'],
+        treatment="2",
 
     ),
 ]
@@ -42,10 +50,10 @@ USE_POINTS = True
 
 ROOMS = [
     dict(
-        name='effort_room_demo',
-        display_name='Effort_room_test',
+        name='Effort_task_Both_Hanzlik',
+        display_name='Effort_task_Both_Hanzlik',
         participant_label_file='_rooms/participant_label_file.txt',
-        use_secure_urls=False
+        use_secure_urls=True
     ),
 ]
 OTREE_AUTH_LEVEL = "STUDY"
@@ -59,3 +67,6 @@ SECRET_KEY = "#n38c)phqy1^2qhv8pk18i_3v9b%#n+*y__@611$a+s#$&a4ao"
 
 # if an app is included in SESSION_CONFIGS, you don"t need to list it here
 INSTALLED_APPS = ["otree"]
+
+DATABASE_URL = "postgres://postgres@localhost/django_db"
+REDIS_URL = "redis://localhost:6379"

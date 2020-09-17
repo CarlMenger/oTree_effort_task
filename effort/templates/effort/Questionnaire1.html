@@ -1,0 +1,30 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+<b>Questionnaire</b>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <table class="table">
+        <tr>
+            <td>Please indicate your gender (the same as you indicated in hroot).</td>
+            <td>
+                {% formfield player.gender %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Please, select the name of the room you are sitting in.</td>
+            <td>
+                {% formfield player.room_name %}
+            </td>
+    </table>
+</div>
+
+<br>
+<button class="otree-btn-next btn btn-primary next-button otree-next-button"> Continue</button>
+{% endblock %}
+
