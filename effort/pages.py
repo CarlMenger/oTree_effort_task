@@ -20,7 +20,6 @@ class Questionnaire2(Page):
     form_model = "player"
     form_fields = ["pc_name"]
 
-
     def is_displayed(self):
         return self.round_number == 1
 
@@ -32,8 +31,6 @@ class Instructions1(Page):
 
 class Instructions1WaitPage(WaitPage):
     wait_for_all_groups = True
-    def is_displayed(self):
-        return self.round_number == 1
 
     def is_displayed(self):
         return self.round_number == 1
@@ -58,7 +55,6 @@ class Instructions2(Page):
                     treatment=self.session.config["treatment"])
 
 
-
 class Results(Page):
     form_model = "player"
 
@@ -75,7 +71,6 @@ class ResultsWaitPageAndGrouping(WaitPage):
     def get_timeout_seconds(self):
         return self.session.config["waitPageTimeout"]
 
-
     wait_for_all_groups = True
     after_all_players_arrive = "group_players"
 
@@ -88,10 +83,12 @@ class GenerateFiles(WaitPage):
     after_all_players_arrive = "create_record_files"
 
 
-class FinalResults(Page):
+class FinalResults(WaitPage):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
+    wait_for_all_groups = True
+    after_all_players_arrive = "exit_browser"
 
 page_sequence = [Intro,
                  Questionnaire1,
@@ -106,4 +103,3 @@ page_sequence = [Intro,
                  GenerateFiles,
                  FinalResults,
                  ]
-
