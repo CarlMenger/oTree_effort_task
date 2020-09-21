@@ -2,33 +2,60 @@
 {% load otree static %}
 
 {% block title %}
-    <b>Instructions</b>
+<b>Instructions</b>
 {% endblock %}
 
 {% block content %}
 <div>
+    {% if treatment == 1 %}
+    <p>
 
-    {% if treatment == 2 %}
-    {% elif treatment == 1 %}
+        In the next part, you will be divided into pairs. This part of session will consist of two identical rounds.
+        Each
+        round will take 30 seconds. Your task remains to press A and B according to sequence displayed on the display.
+        You
+        will be awarded a point for every correct sequence. After the first round, you will be shown a table with a
+        summary
+        of your results, including information about your position relative to your opponent [your opponent will not
+        receive
+        this information]. After the second round, you will see a summary of points you scored.
+    </p>
+    {% elif treatment == 2 %}
+    <p>
+
+        In the next part, you will be divided into pairs. This part of session will consist of two identical rounds.
+        Each
+        round will take 30 seconds. Your task remains to press A and B according to sequence displayed on the display.
+        You
+        will be awarded a point for every correct sequence. After the first round, you will be shown a table with a
+        summary
+        of your results, including information about your position relative to your opponent, your opponent will also
+        receive similar information. After the second round, you will see a summary of points you scored.
+    </p>
     {% else %}
+    <p>
+        In the next part, you will be divided into pairs. This part of session will consist of two identical rounds.
+        Each
+        round will take 30 seconds. Your task remains to press keys A and B according to sequence displayed on the
+        display.
+        You will be awarded a point for every correct sequence. After each round, you will be shown a table with a
+        summary
+        of your results.
+    </p>
     {% endif %}
-
-
-
-
-    after trial round they need 1 of 3 sets of instructions based on treatment including:
-        - that they will get matched with someone
-        - what informations what player gets
-        - how winning bonus works (t0 - more points == win; t1,t2 - last round is who wins,..., tie means
-        split the winning bonus
-        - they will not know the reward for Experiment 2 (aka this after diya s) buy they will be compensated
-        for this  //point is so they do not get wealth effect, so they dont know how much money they get before
-        finishing rest of experiments
-
+    <p>
+        The payment in this part will be based on your performance relative to your pair. The member in each pair, who
+        has
+        scored more points in both rounds combined, will receive {{ winnin_reward }} CZK. In case both members score the
+        same amount of
+        points, the bonus will be split equally. Your reward will be revealed at the end of this session and paid after
+        the
+        experiment is finished.
+    </p>
 
 </div>
 <br>
-    <button class="otree-btn-next btn btn-primary next-button otree-next-button"> I AM READY </button>
+<button class="otree-btn-next btn btn-primary next-button otree-next-button"> I AM READY</button>
 {% endblock %}
 
 

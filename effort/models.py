@@ -37,8 +37,8 @@ class Constants(BaseConstants):
     }
     pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]
     pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]
-
     date_time = time.asctime(time.localtime(time.time()))
+
 
 class Subsession(BaseSubsession):
 
@@ -61,7 +61,6 @@ class Subsession(BaseSubsession):
         # no feedback random matching
         if self.session.config["treatment"] == 0:
             self.group_like_round(1) # FIXME: is needed? shouldnt it stay the same?
-
 
         # single feedback
         elif self.session.config["treatment"] == 1:
@@ -135,14 +134,12 @@ class Subsession(BaseSubsession):
             pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
 
         [group.calculate_points_wins_payments() for group in self.get_groups()]
-        #calculate_points_wins_payments()
         create_score_records()
         create_payfile()
 
-
     def determine_winner(self, player1_points, player2_points):
         if player1_points > player2_points:
-            return [1.0,0.0]
+            return [1.0, 0.0]
         elif player1_points < player2_points:
             return [0.0, 1.0]
         else:
@@ -162,6 +159,7 @@ class Group(BaseGroup):
         p1.player_total_points = sum(p1_points)
         p2.player_total_points = sum(p2_points)
 
+        # Find out who won/lost
         if self.session.config["treatment"] == 0:
             # feeds both last round points
             results = self.subsession.determine_winner(sum(p1_points), sum(p2_points))
@@ -200,7 +198,6 @@ class Player(BasePlayer):
 
     pc_name = models.IntegerField()
 
-
     def pc_name_choices(self):
         if self.room_name == 205:
             return Constants.pc_name_list_205
@@ -209,13 +206,11 @@ class Player(BasePlayer):
         else:
             return ["error"]
 
-
     def player_point_score(self):
         return self.point_score
 
     def participant_label(self):
         return self.participant.label
-
 
     # list of points in paying rounds x to y
     def get_player_point_score_in_rounds(self, first_round, last_round):
@@ -225,4 +220,3 @@ class Player(BasePlayer):
     def get_player_endowment(self):
         return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
             "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
-

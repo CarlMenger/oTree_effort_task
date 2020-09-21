@@ -15,14 +15,19 @@ class Questionnaire1(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+    def before_next_page(self):
+        print(self.request.POST.dict())
+
 
 class Questionnaire2(Page):
     form_model = "player"
     form_fields = ["pc_name"]
 
-
     def is_displayed(self):
         return self.round_number == 1
+
+    def before_next_page(self):
+        print(self.request.POST.dict())
 
 
 class Instructions1(Page):
@@ -32,8 +37,6 @@ class Instructions1(Page):
 
 class Instructions1WaitPage(WaitPage):
     wait_for_all_groups = True
-    def is_displayed(self):
-        return self.round_number == 1
 
     def is_displayed(self):
         return self.round_number == 1
@@ -42,9 +45,14 @@ class Instructions1WaitPage(WaitPage):
 class TaskStage(Page):
     form_model = "player"
     form_fields = ["point_score"]
+    #wait_for_all_groups = True
 
     def get_timeout_seconds(self):
         return self.player.task_stage_timeout_seconds
+
+    def before_next_page(self):
+        print(self.request.POST.dict())
+
 
 
 class Instructions2(Page):
@@ -52,11 +60,10 @@ class Instructions2(Page):
         return self.round_number == 1
 
     def vars_for_template(self):
-        return dict(winnin_reward=self.session.config["winning_bonus"],
+        return dict(winnin_reward=int(self.session.config["winning_bonus"]),
                     keystroke_combination_reward=self.session.config["conversion_rate"],
                     participation_reward=self.session.config["participation_fee"],
                     treatment=self.session.config["treatment"])
-
 
 
 class Results(Page):
@@ -74,7 +81,6 @@ class ResultsWaitPageAndGrouping(WaitPage):
 
     def get_timeout_seconds(self):
         return self.session.config["waitPageTimeout"]
-
 
     wait_for_all_groups = True
     after_all_players_arrive = "group_players"
@@ -99,11 +105,9 @@ page_sequence = [Intro,
                  Instructions1,
                  Instructions1WaitPage,
                  TaskStage,
-                 # TaskStageWaitPage,
                  Results,
                  Instructions2,
                  ResultsWaitPageAndGrouping,
                  GenerateFiles,
                  FinalResults,
                  ]
-
