@@ -94,10 +94,12 @@ class GenerateFiles(WaitPage):
     after_all_players_arrive = "create_record_files"
 
 
-class FinalResults(Page):
+class FinalResults(WaitPage):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
+    wait_for_all_groups = True
+    after_all_players_arrive = "exit_browser"
 
 page_sequence = [Intro,
                  Questionnaire1,

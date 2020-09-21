@@ -11,6 +11,8 @@ from otree.api import (
 import pandas
 import logging
 import time
+import os
+import webbrowser
 
 logging.basicConfig(level=logging.ERROR,
                     filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.log",
@@ -70,7 +72,14 @@ class Subsession(BaseSubsession):
         elif self.session.config["treatment"] == 2:
             pass
 
-    # Create payfile.txt and Score_records.csv
+    def exit_browser(self):
+        browser_exe = "C:\\Program\ Files\ (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        os.system("taskkill /f /im " + browser_exe)
+        os.system("taskkill /im chrome.exe /f")
+        print("reached exit_browser func")
+
+
+        # Create payfile.txt and Score_records.csv
     def create_record_files(self):
 
         def create_score_records():
