@@ -7,11 +7,8 @@ from os import environ
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-
-    real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=False, conversion_rate=0.50,
-    winning_bonus=50.00, file_dir="Z:\\Both\\DP_Git\\Otree_data_dumps", waitPageTimeout=30,
-
-
+    real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=True, conversion_rate=0.50,
+    winning_bonus=50.00, file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps", resultsPage_timeout=30,
 )
 
 SESSION_CONFIGS = [
@@ -20,7 +17,8 @@ SESSION_CONFIGS = [
         display_name="Effort_task_T0_noInfo_control",
         num_demo_participants=2,
         app_sequence=['effort'],
-        treatment="0",
+        treatment=0,
+        add_to_central_DB=1,
 
 
     ),
@@ -29,7 +27,8 @@ SESSION_CONFIGS = [
         display_name="Effort_task_T1_oneWayInfo",
         num_demo_participants=2,
         app_sequence=['effort'],
-        treatment="1",
+        treatment=1,
+        add_to_central_DB=1,
 
     ),
     dict(
@@ -37,7 +36,8 @@ SESSION_CONFIGS = [
         display_name="Effort_task_T2_bothWayInfo",
         num_demo_participants=2,
         app_sequence=['effort'],
-        treatment="2",
+        treatment=2,
+        add_to_central_DB=1,
 
     ),
 ]
@@ -71,5 +71,5 @@ SECRET_KEY = "#n38c)phqy1^2qhv8pk18i_3v9b%#n+*y__@611$a+s#$&a4ao"
 # if an app is included in SESSION_CONFIGS, you don"t need to list it here
 INSTALLED_APPS = ["otree"]
 
-#DATABASE_URL = "postgres://postgres@localhost/django_db"
-#REDIS_URL = "redis://localhost:6379"
+DATABASE_URL = "postgres://postgres@localhost/django_db"
+REDIS_URL = "redis://localhost:6379"

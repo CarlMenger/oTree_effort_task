@@ -8,11 +8,10 @@ from otree.api import (
     Currency as c,
     currency_range,
 )
-import pandas
+import pandas as pd
 import logging
 import time
 import os
-import webbrowser
 
 logging.basicConfig(level=logging.ERROR,
                     filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.log",
@@ -45,41 +44,40 @@ class Constants(BaseConstants):
 class Subsession(BaseSubsession):
 
     # unused methods
-    def point_score_everyone(self):
-        return [p.point_score for p in self.get_players()]
+    #def point_score_everyone(self):
+    #    return [p.point_score for p in self.get_players()]
 
-    def show_player_matrix(self):
-        return self.get_group_matrix()
-
-    def calculate_payoff_table(self):
-        pass
+    #def show_player_matrix(self):
+    #    return self.get_group_matrix()
 
     # Grouping set up
     def creating_session(self):
         # Shuffle players randomly at the start
         self.group_randomly()
 
+    # Load up past data, pivot necesarry ones, further filter rows relevant for treatment
+    def initialize_past_players(self):
+        file_dir = self.session.config["file_dir"]
+        df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
+        df_csr = df_csr.pivot(columns=["treatment", "gender", "round_1", "round_2", "winning_1", "winning_1",])
+        df_csr = df_csr.loc[df_csr["treatment"] == self.session.config["treatment"] - 1]
+        print(df_csr)
+
     def group_players(self):
         # no feedback random matching
         if self.session.config["treatment"] == 0:
             self.group_like_round(1) # FIXME: is needed? shouldnt it stay the same?
 
-        # single feedback
-        elif self.session.config["treatment"] == 1:
-            pass
+        else: # TODO: unfinished
+            self.initialize_past_players()
 
-        # double feedback
-        elif self.session.config["treatment"] == 2:
-            pass
+            if self.session.config["treatment"] == 1:
+                group_matrix = self.get_group_matrix()
 
-    def exit_browser(self):
-        browser_exe = "C:\\Program\ Files\ (x86)\\Google\\Chrome\\Application\\chrome.exe"
-        os.system("taskkill /f /im " + browser_exe)
-        os.system("taskkill /im chrome.exe /f")
-        print("reached exit_browser func")
+            elif self.session.config["treatment"] == 2:
+                pass
 
-
-        # Create payfile.txt and Score_records.csv
+    # Create payfile.txt and Score_records.csv
     def create_record_files(self):
 
         def create_score_records():
@@ -88,41 +86,42 @@ class Subsession(BaseSubsession):
             treatment = self.session.config["treatment"]
 
             # data lists # TODO more relaible version, where order of lines of code is not deteriminal to
-            # TODO headers
-            player_info = []
-            raw_data = []
+            # TODO  --> use pd.insert(pos,[data])
+            player_info = {}
+            df = pd.DataFrame()
             for player in self.get_players():
-                player_info.append(timestr)
-                player_info.append(treatment)
-                player_info.append(player.in_round(1).room_name)
-                player_info.append(player.in_round(1).pc_name)
+                index_ = 0
+                player_info["date"] = timestr
+                player_info["treatment"] = treatment
+                player_info["room_name"] = player.in_round(1).room_name
+                player_info["pc_name"] = player.in_round(1).pc_name
                 for round in player.get_player_point_score_in_rounds(1, 3):
-                    player_info.append(round)
-                player_info.append(player.in_round(1).gender)
-                player_info.append(player.winning) # TODO: win for all rounds
-                player_info.append(player.get_others_in_group()[0].room_name)
-                player_info.append(player.get_others_in_group()[0].pc_name)
-                raw_data.append(player_info)
-                player_info = []
+                    player_info[f"round_{index_}"] = round
+                    index_ += 1
+                index_ = 0
+                player_info["gender"] = player.in_round(1).gender
+                player_info["winning_1"] = player.in_round(1).winning
+                player_info["winning_2"] = player.in_round(2).winning
+                player_info["other_room_name"] = player.get_others_in_group()[0].in_round(1).room_name
+                player_info["other_pc_name"] = player.get_others_in_group()[0].in_round(1).pc_name
+                df = df.append(player_info, ignore_index=True)
+                player_info = {}
+            columns = ["date", "treatment", "gender", "room_name", "pc_name", "round_0", "round_1", "round_2",
+                       "winning_1", "winning_1",]
 
-            columns = [list(column) for column in zip(*raw_data)]
-
-            # format data for pandas
-            raw_data = dict(date=columns[0],
-                            treatment=columns[1],
-                            room_name=columns[2],
-                            pc_name=columns[3],
-                            round_0=columns[4],
-                            round_1=columns[5],
-                            round_2=columns[6],
-                            gender=columns[7],
-                            win=columns[8],
-                            other_player_room_name=columns[9],
-                            other_player_pc_name=columns[10],
-                            )
-            print(raw_data)
             # csv generation
-            pandas.DataFrame(raw_data).to_csv(f"{file_dir}\\score_records__T{treatment}__{timestr}.csv")
+            # if add_to_central_DB == 1, also update CSR (all sessions combined df)
+            if self.session.config["add_to_central_DB"]:
+                if not os.path.isfile(f"{file_dir}\\Central_Score_Records.json"):
+                    df.to_json(f"{file_dir}\\Central_Score_Records.json")
+                csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
+                # TODO?: concat(keys=treatments),
+                df.reset_index(inplace=True, drop=True)
+                csr.reset_index(inplace=True, drop=True) # TODO: now to check if it does not fuck up previous csr
+                pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
+
+            # Always create session records
+            df.to_json(f"{file_dir}\\score_records__T{treatment}__{timestr}.json")
 
         def create_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
@@ -140,7 +139,7 @@ class Subsession(BaseSubsession):
                                 payment=payments,
                                 has_won=winning,)
             # txt generation
-            pandas.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
+            pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
 
         [group.calculate_points_wins_payments() for group in self.get_groups()]
         create_score_records()
@@ -204,7 +203,6 @@ class Player(BasePlayer):
 
     player_total_points = models.IntegerField(initial=0)
     player_payment = models.IntegerField(initial=0)
-
     pc_name = models.IntegerField()
 
     def pc_name_choices(self):
@@ -229,3 +227,14 @@ class Player(BasePlayer):
     def get_player_endowment(self):
         return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
             "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
+
+
+class PastPlayer(BasePlayer):
+    treatment = models.IntegerField(initial=0)
+    gender = models.IntegerField(initial=0)
+    point_score_0 = models.PositiveIntegerField(initial=0)
+    point_score_1 = models.PositiveIntegerField(initial=0)
+    point_score_2 = models.PositiveIntegerField(initial=0)
+    winning_1 = models.PositiveIntegerField(initial=0)
+    winning_2 = models.PositiveIntegerField(initial=0)
+    past_id = models.PositiveIntegerField(initial=0) #TODO: Do smart way to do IDs

@@ -54,10 +54,16 @@ class TaskStage(Page):
         print(self.request.POST.dict())
 
 
+class TaskStageWaitPageGrouping(WaitPage):
+    def is_displayed(self):
+        return self.round_number == 1
+    wait_for_all_groups = True
+    after_all_players_arrive = "group_players"
+
 
 class Instructions2(Page):
     def is_displayed(self):
-        return self.round_number == 1
+        return self.round_number == 2
 
     def vars_for_template(self):
         return dict(winnin_reward=int(self.session.config["winning_bonus"]),
@@ -70,7 +76,12 @@ class Results(Page):
     form_model = "player"
 
     def vars_for_template(self):
-        return self.player.participant.label
+        return dict(point_score=self.player.point_score,
+                    treatment=self.session.config["treatment"]
+                    )
+
+    def get_timeout_seconds(self):
+        return self.session.config["resultsPage_timeout"]
 
 
 # Grouping players in between rounds
@@ -94,12 +105,10 @@ class GenerateFiles(WaitPage):
     after_all_players_arrive = "create_record_files"
 
 
-class FinalResults(WaitPage):
+class FinalResults(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
-    wait_for_all_groups = True
-    after_all_players_arrive = "exit_browser"
 
 page_sequence = [Intro,
                  Questionnaire1,
@@ -107,8 +116,9 @@ page_sequence = [Intro,
                  Instructions1,
                  Instructions1WaitPage,
                  TaskStage,
-                 Results,
+                 TaskStageWaitPageGrouping,
                  Instructions2,
+                 Results,
                  ResultsWaitPageAndGrouping,
                  GenerateFiles,
                  FinalResults,
