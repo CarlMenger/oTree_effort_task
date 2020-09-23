@@ -25,7 +25,7 @@ class PlayerBot(Bot):
             yield pages.Instructions1
         yield Submission(pages.TaskStage, dict(point_score=str(int(numpy.random.normal(100, 20)))), check_html=False)
 
-        if self.round_number == 2:
+        if self.round_number == 1:
             yield pages.Instructions2
         yield Submission(pages.Results,  check_html=False)
         if self.round_number == Constants.num_rounds:

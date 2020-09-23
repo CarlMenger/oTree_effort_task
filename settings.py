@@ -29,6 +29,7 @@ SESSION_CONFIGS = [
         app_sequence=['effort'],
         treatment=1,
         add_to_central_DB=1,
+        pairing_filter_margin=2
 
     ),
     dict(
@@ -38,6 +39,7 @@ SESSION_CONFIGS = [
         app_sequence=['effort'],
         treatment=2,
         add_to_central_DB=1,
+        pairing_filetr_margin=2
 
     ),
 ]

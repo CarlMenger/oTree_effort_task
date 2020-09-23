@@ -15,8 +15,8 @@ class Questionnaire1(Page):
     def is_displayed(self):
         return self.round_number == 1
 
-    def before_next_page(self):
-        print(self.request.POST.dict())
+    #def before_next_page(self):
+    #    print(self.request.POST.dict())
 
 
 class Questionnaire2(Page):
@@ -26,8 +26,8 @@ class Questionnaire2(Page):
     def is_displayed(self):
         return self.round_number == 1
 
-    def before_next_page(self):
-        print(self.request.POST.dict())
+    #def before_next_page(self):
+    #    print(self.request.POST.dict())
 
 
 class Instructions1(Page):
@@ -50,20 +50,20 @@ class TaskStage(Page):
     def get_timeout_seconds(self):
         return self.player.task_stage_timeout_seconds
 
-    def before_next_page(self):
-        print(self.request.POST.dict())
+    #def before_next_page(self):
+    #    print(self.request.POST.dict())
 
 
 class TaskStageWaitPageGrouping(WaitPage):
     def is_displayed(self):
-        return self.round_number == 1
+        return self.round_number == 2
     wait_for_all_groups = True
-    after_all_players_arrive = "group_players"
+    after_all_players_arrive = "group_players_after_trial_task"
 
 
 class Instructions2(Page):
     def is_displayed(self):
-        return self.round_number == 2
+        return self.round_number == 1
 
     def vars_for_template(self):
         return dict(winnin_reward=int(self.session.config["winning_bonus"]),
@@ -85,7 +85,7 @@ class Results(Page):
 
 
 # Grouping players in between rounds
-class ResultsWaitPageAndGrouping(WaitPage):
+class ResultsWaitPage(WaitPage): # FIXME: Am i needed?
     def is_displayed(self):
         return self.round_number > 1 and self.round_number != Constants.num_rounds
         # FIXME: is this method firing in last round a problem?
@@ -94,7 +94,7 @@ class ResultsWaitPageAndGrouping(WaitPage):
         return self.session.config["waitPageTimeout"]
 
     wait_for_all_groups = True
-    after_all_players_arrive = "group_players"
+    #after_all_players_arrive = "group_players_after_trial_task"
 
 
 class GenerateFiles(WaitPage):
@@ -119,7 +119,7 @@ page_sequence = [Intro,
                  TaskStageWaitPageGrouping,
                  Instructions2,
                  Results,
-                 ResultsWaitPageAndGrouping,
+                 ResultsWaitPage,
                  GenerateFiles,
                  FinalResults,
                  ]

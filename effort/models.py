@@ -12,10 +12,11 @@ import pandas as pd
 import logging
 import time
 import os
+import pprint
 
-logging.basicConfig(level=logging.ERROR,
-                    filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.log",
-                    format='%(asctime)s %(message)s'
+logging.basicConfig(level=logging.DEBUG,
+                    filename="D:\\__OTree\\__DP - effort task\\TestDataDumps\\debug_log.txt",
+                    format="%(asctime)s: %(message)s",
                     )
 
 
@@ -55,29 +56,22 @@ class Subsession(BaseSubsession):
         # Shuffle players randomly at the start
         self.group_randomly()
 
-    # Load up past data, pivot necesarry ones, further filter rows relevant for treatment
-    def initialize_past_players(self):
-        file_dir = self.session.config["file_dir"]
-        df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
-        df_csr = df_csr.pivot(columns=["treatment", "gender", "round_1", "round_2", "winning_1", "winning_1",])
-        df_csr = df_csr.loc[df_csr["treatment"] == self.session.config["treatment"] - 1]
-        print(df_csr)
+    def group_players_after_trial_task(self):
+        # all Ts are technically grouped together, for T1, T2 it just doesnt do anything meaningful
 
-    def group_players(self):
-        # no feedback random matching
-        if self.session.config["treatment"] == 0:
-            self.group_like_round(1) # FIXME: is needed? shouldnt it stay the same?
+        self.group_like_round(1)  # FIXME: is needed? shouldnt it stay the same?
 
-        else: # TODO: unfinished
-            self.initialize_past_players()
+        # Load and format json DF into reduced version
+        if self.session.config["treatment"] > 0:
+            wanted_data_columns = ["treatment", "gender", "round_1", "round_2", "winning_1", "winning_2", ]
+            # FIXME: wanted_data_columns in more general location ?
+            file_dir = self.session.config["file_dir"]
+            df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
+            sub_table = df_csr[wanted_data_columns]
+            for player in self.get_players():
+                player.get_pairs_with_past_player(sub_table)# FIXME
 
-            if self.session.config["treatment"] == 1:
-                group_matrix = self.get_group_matrix()
-
-            elif self.session.config["treatment"] == 2:
-                pass
-
-    # Create payfile.txt and Score_records.csv
+    # Create payfile.txt and Score_records.json
     def create_record_files(self):
 
         def create_score_records():
@@ -141,7 +135,7 @@ class Subsession(BaseSubsession):
             # txt generation
             pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
 
-        [group.calculate_points_wins_payments() for group in self.get_groups()]
+        [group.calculate_points_wins_payments_t0() for group in self.get_groups()]
         create_score_records()
         create_payfile()
 
@@ -155,7 +149,7 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
-    def calculate_points_wins_payments(self):
+    def calculate_points_wins_payments_t0(self):
         # Load up players in this group
         p1, p2 = self.get_players()
 
@@ -185,6 +179,8 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    score_position_options = models.LongStringField()
+    score_position = models.StringField()
     point_score = models.PositiveIntegerField(initial=0)
     winning = models.PositiveIntegerField(initial=0.0)
     task_stage_timeout_seconds = models.IntegerField(initial=35)
@@ -219,22 +215,33 @@ class Player(BasePlayer):
     def participant_label(self):
         return self.participant.label
 
+
     # list of points in paying rounds x to y
     def get_player_point_score_in_rounds(self, first_round, last_round):
-        return [score_in_paying_rounds.point_score for score_in_paying_rounds in
+        return [in_paying_rounds.point_score for in_paying_rounds in
                 self.in_rounds(first_round, last_round)]
 
     def get_player_endowment(self):
         return self.player_total_points * self.session.config["conversion_rate"] + self.session.config[
             "participation_fee"] + int(self.session.config["winning_bonus"] * self.winning)
 
+    # Get index or id of "past" player who their are both slightly_behind and slightly_ahead compared to that index
+    def get_pairs_with_past_player(self, sub_table, treatment=1):
+        spread = int(self.session.config["pairing_filter_margin"])
+        my_score = (self.get_player_point_score_in_rounds(2, 2))[0]
+        results_dict = dict(slightly_behind_to=[],
+                            slightly_ahead_to=[],)
+        filtered_table = sub_table[sub_table["treatment"] == self.session.config["treatment"] - 1]
+        filtered_table = filtered_table[filtered_table["gender"] == self.gender]
 
-class PastPlayer(BasePlayer):
-    treatment = models.IntegerField(initial=0)
-    gender = models.IntegerField(initial=0)
-    point_score_0 = models.PositiveIntegerField(initial=0)
-    point_score_1 = models.PositiveIntegerField(initial=0)
-    point_score_2 = models.PositiveIntegerField(initial=0)
-    winning_1 = models.PositiveIntegerField(initial=0)
-    winning_2 = models.PositiveIntegerField(initial=0)
-    past_id = models.PositiveIntegerField(initial=0) #TODO: Do smart way to do IDs
+        # Find indexes matching the filter requirements for slightly_below interval
+        filtered_table_sb = filtered_table[filtered_table["round_1"] > my_score]
+        results_dict["slightly_behind_to"] = filtered_table_sb[
+            filtered_table_sb["round_1"] <= (my_score + spread)].index.tolist()
+
+        # Find indexes matching the filter requirements for slightly_ahead interval
+        filtered_table_sa = filtered_table[filtered_table["round_1"] < my_score]
+        results_dict["slightly_ahead_to"] = filtered_table_sb[
+            filtered_table_sb["round_1"] >= (my_score - spread)].index.tolist()
+
+        return results_dict  # REWRITE:for no interval, change <=/>= to == and ignore/coment first line in both filters
