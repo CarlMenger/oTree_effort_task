@@ -54,7 +54,7 @@ class Subsession(BaseSubsession):
     # Grouping set up
     def creating_session(self):
         # Shuffle players randomly at the start
-        self.group_randomly()
+        self.group_randomly()  # REWRITE
 
     def group_players_after_trial_task(self):
         # all Ts are technically grouped together, for T1, T2 it just doesnt do anything meaningful
@@ -179,6 +179,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    label=models.StringField()
     score_position_options = models.LongStringField()
     score_position = models.StringField()
     point_score = models.PositiveIntegerField(initial=0)
@@ -215,7 +216,6 @@ class Player(BasePlayer):
     def participant_label(self):
         return self.participant.label
 
-
     # list of points in paying rounds x to y
     def get_player_point_score_in_rounds(self, first_round, last_round):
         return [in_paying_rounds.point_score for in_paying_rounds in
@@ -244,4 +244,4 @@ class Player(BasePlayer):
         results_dict["slightly_ahead_to"] = filtered_table_sb[
             filtered_table_sb["round_1"] >= (my_score - spread)].index.tolist()
 
-        return results_dict  # REWRITE:for no interval, change <=/>= to == and ignore/coment first line in both filters
+        return results_dict  # REWRITE:for no interval, change <=/>= to == and ignore/comment first line in both filters

@@ -27,7 +27,8 @@ class PlayerBot(Bot):
 
         if self.round_number == 1:
             yield pages.Instructions2
-        yield Submission(pages.Results,  check_html=False)
+        if self.round_number > 1 and self.round_number != Constants.num_rounds:
+            yield Submission(pages.Results,  check_html=False)
         if self.round_number == Constants.num_rounds:
             yield pages.FinalResults
 

@@ -75,6 +75,9 @@ class Instructions2(Page):
 class Results(Page):
     form_model = "player"
 
+    def is_displayed(self):
+        return self.round_number > 1 and self.round_number != Constants.num_rounds
+
     def vars_for_template(self):
         return dict(point_score=self.player.point_score,
                     treatment=self.session.config["treatment"]
@@ -108,6 +111,12 @@ class GenerateFiles(WaitPage):
 class FinalResults(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
+
+    def vars_for_template(self):
+
+        return dict(point_score_1=self.player.in_round(2).point_score,
+                    point_score_2=self.player.in_round(3).point_score,
+                    total_point_score=self.player.player_total_points)
 
 
 page_sequence = [Intro,

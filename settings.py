@@ -7,7 +7,7 @@ from os import environ
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=5.00, participation_fee=50.00, doc="", use_browser_bots=True, conversion_rate=0.50,
+    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
     winning_bonus=50.00, file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps", resultsPage_timeout=30,
 )
 

@@ -122,4 +122,4 @@ def create_subtable():
 create_subtable()
 # print(opened_file.columns)
 
-kek = [2]
+
