@@ -126,12 +126,14 @@ class Subsession(BaseSubsession):
             winning = [player.winning for player in self.get_players()]
             pc_names = [player.pc_name for player in self.get_players()]
             gender = [player.gender for player in self.get_players()]
+            label = [[player.participant.label for player in self.get_players()]]
 
             payfile_data = dict(room_name=room_name,
                                 pc_name=pc_names,
                                 gender=gender,
                                 payment=payments,
-                                has_won=winning,)
+                                has_won=winning,
+                                pc=label,)
             # txt generation
             pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
 
