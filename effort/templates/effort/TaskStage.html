@@ -3,14 +3,28 @@
 
 {% block title %}
 
+{% if round == 1 %}
+    <b>Round 0 (Trial Round)</b>
+
+{% elif round == 2 %}
+    <b>Round 1 </b>
+
+{% elif round == 3 %}
+    <b>Round 2 (Final Round)</b>
+
+{% endif%}
+
 {% endblock %}
 
 
 {% block content %}
+
+
     <p id="counterTag"> You will start in <span id="countdown">5</span> </p>
     <p> Press "a" then "b" repeatedly to score points</p>
 	<p>Points: <span id="points">0</span></p>
     <input type="hidden" name="point_score" value="0" id="score"/>
+    <input type="hidden" name="overall_keystroke_count" value="0" id="keystrokes"/>
 
 
 <style>
@@ -33,6 +47,7 @@
 
     const target = document.getElementById("points");
     var points = 0;
+    var overall_keystroke_count = 0;
     var x = false;
     var seconds = 5,
     $seconds = document.querySelector("#countdown");
@@ -49,6 +64,7 @@
       else {
         document.getElementById("counterTag").style.display = "none";
         document.addEventListener("keydown", function(event) {
+          ++overall_keystroke_count;
           if (event.key === "a" || event.key === "A") x = true;
           if (event.key === "b" || event.key === "B") {
             if (!x) return;
@@ -56,6 +72,7 @@
             x = false;
           }
           document.getElementById("score").value = points;
+          document.getElementById("keystrokes").value = overall_keystroke_count;
         })
       }
     })();

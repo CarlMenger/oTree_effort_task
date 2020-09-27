@@ -40,6 +40,8 @@ class Constants(BaseConstants):
     pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]
     pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]
     date_time = time.asctime(time.localtime(time.time()))
+    results_page_timeout_seconds = 30
+    task_stage_timeout_seconds = 35  # 30 sec game time + 5 sec prep time
 
 
 class Subsession(BaseSubsession):
@@ -55,6 +57,7 @@ class Subsession(BaseSubsession):
     def creating_session(self):
         # Shuffle players randomly at the start
         self.group_randomly()  # REWRITE
+
 
     def group_players_after_trial_task(self):
         # all Ts are technically grouped together, for T1, T2 it just doesnt do anything meaningful
@@ -87,21 +90,29 @@ class Subsession(BaseSubsession):
                 index_ = 0
                 player_info["date"] = timestr
                 player_info["treatment"] = treatment
-                player_info["room_name"] = player.in_round(1).room_name
-                player_info["pc_name"] = player.in_round(1).pc_name
-                for round in player.get_player_point_score_in_rounds(1, 3):
-                    player_info[f"round_{index_}"] = round
+                player_info["gender"] = player.in_round(1).gender
+                for round_pointscore in player.get_player_point_score_in_rounds(1, 3):
+                    player_info[f"round_score{index_}"] = round_pointscore
                     index_ += 1
                 index_ = 0
-                player_info["gender"] = player.in_round(1).gender
+                for p_in_round in player.in_rounds(1, 3):
+                    player_info[f"round_keystrokes{index_}"] = p_in_round.overall_keystroke_count
+                    index_ += 1
                 player_info["winning_1"] = player.in_round(1).winning
                 player_info["winning_2"] = player.in_round(2).winning
-                player_info["other_room_name"] = player.get_others_in_group()[0].in_round(1).room_name
-                player_info["other_pc_name"] = player.get_others_in_group()[0].in_round(1).pc_name
+                try:
+                    player_info["room_name"] = player.in_round(1).participant.label[0:5]
+                    player_info["pc_name"] = player.in_round(1).participant.label[6:]
+                    player_info["other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
+                    player_info["other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
+                except(TypeError):
+                    pass
+
+
                 df = df.append(player_info, ignore_index=True)
                 player_info = {}
-            columns = ["date", "treatment", "gender", "room_name", "pc_name", "round_0", "round_1", "round_2",
-                       "winning_1", "winning_1",]
+            #columns = ["date", "treatment", "gender", "room_name", "pc_name", "round_score_0", "round_score_1", "round_score_2",
+             #          "winning_1", "winning_1",]
 
             # csv generation
             # if add_to_central_DB == 1, also update CSR (all sessions combined df)
@@ -111,31 +122,32 @@ class Subsession(BaseSubsession):
                 csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
                 # TODO?: concat(keys=treatments),
                 df.reset_index(inplace=True, drop=True)
-                csr.reset_index(inplace=True, drop=True) # TODO: now to check if it does not fuck up previous csr
+                csr.reset_index(inplace=True, drop=True) #  TODO: now to check if it does not fuck up previous csr
                 pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
 
             # Always create session records
-            df.to_json(f"{file_dir}\\score_records__T{treatment}__{timestr}.json")
+            df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
 
+        # User friendly excel and txt for payment administration
         def create_payfile():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
             file_dir = self.session.config["file_dir"]
             # FIXME: is payments ok ?
             payments = [player.get_player_endowment() for player in self.get_players()]
-            room_name = [player.room_name for player in self.get_players()]
             winning = [player.winning for player in self.get_players()]
-            pc_names = [player.pc_name for player in self.get_players()]
-            gender = [player.gender for player in self.get_players()]
-            label = [[player.participant.label for player in self.get_players()]]
-
-            payfile_data = dict(room_name=room_name,
-                                pc_name=pc_names,
-                                gender=gender,
-                                payment=payments,
-                                has_won=winning,
-                                pc=label,)
+            pc_names = [player.participant.label for player in self.get_players()]
+            try:
+                payfile_data = dict(pc_name=pc_names,
+                                    payment=payments,
+                                    has_won=winning,)
+            except(TypeError):
+                pc_names=[pc for pc in range(len(pc_names))]
+                payfile_data = dict(pc_name=pc_names,
+                                    payment=payments,
+                                    has_won=winning,)
             # txt generation
             pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
+            pd.DataFrame(payfile_data).to_excel(f"{file_dir}\\payfile_{timestr}.xlsx", engine='xlsxwriter')
 
         [group.calculate_points_wins_payments_t0() for group in self.get_groups()]
         create_score_records()
@@ -181,12 +193,11 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    label=models.StringField()
+    label = models.StringField()
     score_position_options = models.LongStringField()
     score_position = models.StringField()
     point_score = models.PositiveIntegerField(initial=0)
     winning = models.PositiveIntegerField(initial=0.0)
-    task_stage_timeout_seconds = models.IntegerField(initial=35)
     gender = models.IntegerField(widget=widgets.RadioSelect,
                                  choices=[
                                      [0, "male"],
@@ -202,7 +213,8 @@ class Player(BasePlayer):
 
     player_total_points = models.IntegerField(initial=0)
     player_payment = models.IntegerField(initial=0)
-    pc_name = models.IntegerField()
+    pc_name = models.IntegerField()  # REWRITE ME
+    overall_keystroke_count = models.IntegerField()
 
     def pc_name_choices(self):
         if self.room_name == 205:

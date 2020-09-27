@@ -12,16 +12,16 @@ class PlayerBot(Bot):
         if self.round_number == 1:
             yield pages.Intro
             yield pages.Questionnaire1, dict(gender=str(*random.sample([0, 1],1)),
-                                             room_name=str(*random.sample([203, 205], 1))
+                                             #room_name=str(*random.sample([203, 205], 1))
                                              ),
-            if self.player.room_name == 205:
+            """if self.player.room_name == 205:
                 yield pages.Questionnaire2, dict(
                     pc_name=random.sample(Constants.pc_name_list_205, 1)[0][0]
                                  )
             else:
                 yield pages.Questionnaire2, dict(
                     pc_name=random.sample(Constants.pc_name_list_203, 1)[0][0]
-                )
+                )"""
             yield pages.Instructions1
         yield Submission(pages.TaskStage, dict(point_score=str(int(numpy.random.normal(100, 20)))), check_html=False)
 
