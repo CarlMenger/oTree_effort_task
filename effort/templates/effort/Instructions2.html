@@ -10,55 +10,36 @@
     {% if treatment == 1 %}
     <p>
 
-        In the rest of this experiment, you will be paired with another participant who is sitting in this room. This
-        part will consist of two identical rounds just like the one you just finished. Each round will take 30 seconds.
-        Your task is to press a and b alternatively. You will be awarded a point for every correct sequence. After the
-        each round, you will be shown a table with a summary of your results. If your sum of points from both rounds is
-        higher than that of your partner, you will receive the reward of 50 CZK, otherwise you will receive 0 CZK. You
-        will receive the information about whether you won or lost at the end of the experimental session. , including
-        information about your position relative to your opponent [your opponent will not
-        receive this information]. After the second round, you will see a summary of points you scored.
+        In the next part, you will be divided randomly into pairs. This part will consist of two identical rounds just
+        like the one you just finished. Each round will take 30 seconds. Your task remains to press A and B according
+        to sequence displayed on the display. You will be awarded a point for every correct sequence. After the first
+        round, you will be shown your results, including information about your position relative to your opponent.
+        After the second round, you will see a summary of points you scored.
 
     </p>
     {% elif treatment == 2 %}
     <p>
 
-        In the next part, you will be divided randomly into pairs. This part will consist of two identical
-        rounds just like the one you just finished.
-        Each
-        round will take 30 seconds. Your task remains to press A and B according to sequence displayed on the display.
+        In the next part, you will be divided randomly into pairs. This part will consist of two identical rounds just
+        like the one you just finished. Each round will take 30 seconds.
+        Your task remains to press A and B according to sequence displayed on the display.
         You
-        will be awarded a point for every correct sequence. After the first round, you will be shown a table with a
-        summary
-        of your results, including information about your position relative to your opponent, your opponent will also
+        will be awarded a point for every correct sequence. After the first round, you will be shown your results,
+        including information about your position relative to your opponent, your opponent will also
         receive similar information. After the second round, you will see a summary of points you scored.
 
     </p>
     {% else %}
     <p>
-      In the next part, you will be divided randomly into pairs. This part will consist of two identical
-        rounds just like the one you just finished.
-        Each
-        round will take 30 seconds. Your task remains to press keys A and B according to sequence displayed on the
-        display.
-        You will be awarded a point for every correct sequence. After each round, you will be shown a table with a
-        summary
-        of your results.
+        In the rest of this experiment, you will be paired with another participant who is sitting in this room. This
+        part will consist of two identical rounds just like the one you just finished. Each round will take 30 seconds.
+        Your task is to press a and b alternatively. You will be awarded a point for every correct sequence. After the
+        each round, you will be shown a table with a summary of your results. If your sum of points from both rounds is
+        higher than that of your partner, you will receive the reward of 50 CZK, otherwise you will receive 0 CZK. You
+        will receive the information about whether you won or lost at the end of the experimental session.
 
     </p>
-    {% endif %}
-    <p>
-        The payment in this part will be based on your performance relative to your pair. The member in each pair, who
-        has
-        scored more points in both rounds combined, will receive {{ winnin_reward }} CZK. In case both members score the
-        same amount of
-        points, the bonus will be split equally. Your reward will be revealed at the end of this session and paid after
-        the
-        experiment is finished.
-
-
-    </p>
-
+{% endif %}
 </div>
 <br>
 <button class="otree-btn-next btn btn-primary next-button otree-next-button"> I AM READY</button>

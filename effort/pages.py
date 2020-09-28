@@ -7,6 +7,9 @@ class Intro(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+    def before_next_page(self):
+        self.player.label = self.participant.label
+
 
 class Questionnaire1(Page):
     form_model = "player"
@@ -63,6 +66,7 @@ class TaskStageWaitPageGrouping(WaitPage):
         return self.round_number == 2
     wait_for_all_groups = True
     after_all_players_arrive = "group_players_after_trial_task"
+
 
 
 class Instructions2(Page):

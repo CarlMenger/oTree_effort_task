@@ -109,17 +109,38 @@ past_players = data_handling()
 
 
 def create_subtable():
+    results_dict = {}
     my_score = 90
     sub_table = opened_file[wanted_data_columns]
     # print(sub_table.to_string())
-    filtered_table = sub_table[sub_table["treatment"] == 1 - 1]
-    filtered_table = filtered_table[filtered_table["gender"] == 0]
-    filtered_table = filtered_table[filtered_table["round_1"] > my_score]
-    print(filtered_table[filtered_table["round_1"] <= my_score + 3].index).tolist()
+    sub_table = sub_table[sub_table["treatment"] == 1 - 1]
+    sub_table = sub_table[sub_table["gender"] == 0]
+    # SB & SA filtering
+    filtered_table = sub_table[sub_table["round_1"] > my_score]
+    filtered_table = filtered_table[filtered_table["round_1"] <= my_score + 3]
+    # at least one match
+    if len(filtered_table.index):
+        results_dict["slightly_behind_to"] = filtered_table.index.tolist()
+        print(results_dict["slightly_behind_to"])
+        filtered_table = sub_table[sub_table["round_1"] < my_score]
+        filtered_table = filtered_table[filtered_table["round_1"] >= my_score + 3]
+        if len(filtered_table.index):
+            results_dict["slightly_ahead_to"] = filtered_table.index.tolist()
+            #self.score_position = random.sample(results_dict.keys(), 1)[0]
+            #self.index_of_paired_past_player = random.sample(results_dict[self.score_position], 1)[0]
+
+    else:
+        print("call random pairing function")
+
     # print(filtered_table)
+    print(f"filtered_table lenght: {((len(filtered_table.index)))}")
+    print(filtered_table)
+
+    print(f"sample index lenght: {(int(len(sub_table.index)))}")
 
 
-create_subtable()
-# print(opened_file.columns)
 
+
+sub_table = opened_file[wanted_data_columns]
+print(sub_table.to_string())
 
