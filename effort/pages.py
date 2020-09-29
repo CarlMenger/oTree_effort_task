@@ -68,15 +68,12 @@ class TaskStageWaitPageGrouping(WaitPage):
     after_all_players_arrive = "group_players_after_trial_task"
 
 
-
 class Instructions2(Page):
     def is_displayed(self):
         return self.round_number == 1
 
     def vars_for_template(self):
-        return dict(winnin_reward=int(self.session.config["winning_bonus"]),
-                    keystroke_combination_reward=self.session.config["conversion_rate"],
-                    participation_reward=self.session.config["participation_fee"],
+        return dict(winning_reward=int(self.session.config["winning_bonus"]),
                     treatment=self.session.config["treatment"])
 
 
@@ -94,23 +91,21 @@ class Results(Page):
         return dict(point_score=self.player.point_score,
                     treatment=self.session.config["treatment"],
                     timeout_seconds=Constants.results_page_timeout_seconds,
-                    )
+                    score_position=Constants.all_score_positions[self.player.score_position],)
 
     def get_timeout_seconds(self):
         return Constants.results_page_timeout_seconds
 
 
 # Grouping players in between rounds
-class ResultsWaitPage(WaitPage): # FIXME: Am i needed?
+class ResultsWaitPage(WaitPage):  # FIXME: Am i needed?
     def is_displayed(self):
         return self.round_number > 1 and self.round_number != Constants.num_rounds
-        # FIXME: is this method firing in last round a problem?
 
     def get_timeout_seconds(self):
         return self.session.config["waitPageTimeout"]
 
     wait_for_all_groups = True
-    #after_all_players_arrive = "group_players_after_trial_task"
 
 
 class GenerateFiles(WaitPage):
@@ -129,7 +124,8 @@ class FinalResults(Page):
 
         return dict(point_score_1=self.player.in_round(2).point_score,
                     point_score_2=self.player.in_round(3).point_score,
-                    total_point_score=self.player.player_total_points)
+                    total_point_score=self.player.player_total_points,
+                    )
 
 
 page_sequence = [Intro,
@@ -145,4 +141,5 @@ page_sequence = [Intro,
                  ResultsWaitPage,
                  GenerateFiles,
                  FinalResults,
+
                  ]

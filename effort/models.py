@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.DEBUG,
 author = "Carl_Menger"
 
 doc = """
-Separate players based on real effort task into group competing against each other
+Separate players based on real effort task and gender into groups competing against each other
 """
 
 
@@ -31,11 +31,13 @@ class Constants(BaseConstants):
     name_in_url = "StopLookingAtUrl"
     players_per_group = 2
     num_rounds = 3
-    score_info = {
-        "slightly_ahead": "You are slightly ahead in score compared to the other player in your group",
-        "slightly_behind": "You are slightly behind in score compared to the other player in your group",
-        "far_ahead": "You are slightly ahead in score compared to the other player in your group",
-        "far_behind": "You are slightly behind in score compared to the other player in your group",
+    all_score_positions = {
+        "slightly_ahead": "You are slightly ahead in score compared to your opponent",
+        "slightly_behind": "You are slightly behind in score compared to your opponent",
+        "far_ahead": "You are far ahead in score compared to your opponent",
+        "far_behind": "You are far behind in score compared to your opponent",
+        "equal_position": "You have the same score as your opponent",
+        "T0": ""  # Placeholder for T0 so it doesnt raise error
     }
     pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]
     pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]
@@ -53,12 +55,22 @@ class Subsession(BaseSubsession):
     #def show_player_matrix(self):
     #    return self.get_group_matrix()
 
+
+
     # Grouping set up
     def creating_session(self):
         if self.round_number == 1:
             self.group_randomly()
         else:
             self.group_like_round(1)
+
+    def determine_winner(self, player1_points, player2_points):
+        if player1_points > player2_points:
+            return [1.0, 0.0]
+        elif player1_points < player2_points:
+            return [0.0, 1.0]
+        else:
+            return [0.5, 0.5]
 
     def group_players_after_trial_task(self):
         # all Ts are technically grouped together, for T1, T2 it just doesnt do anything meaningful
@@ -78,11 +90,15 @@ class Subsession(BaseSubsession):
                 player.get_pairs_with_past_player(sub_table)# FIXME
 
         if self.session.config["treatment"] == 0:
-            # Add winners to player.winner
-            for player in self.get_players():
-                player_score = player.get_player_point_score_in_rounds(2, 2)
-                grouped_player_score = player.get_others_in_group()[0].player_point_score_in_rounds(2, 2)
-                player.winning = self.determine_winner(player_score, grouped_player_score)
+            # Add winners to player.winner for first round
+            for group in self.get_groups():
+                p1 = group.get_players()[0]
+                p2 = group.get_players()[1]
+                first_player_score_r2 = p1.get_player_point_score_in_rounds(2, 2)[0]
+                second_player_score_r2 = p2.get_player_point_score_in_rounds(2, 2)[0]
+                results = self.determine_winner(first_player_score_r2, second_player_score_r2)
+                p1.winning = results[0]
+                p2.winning = results[1]
 
 
     # Create payfile.txt and Score_records.json
@@ -99,9 +115,9 @@ class Subsession(BaseSubsession):
             df = pd.DataFrame()
             for player in self.get_players():
                 index_ = 0
-                player_info["date"] = timestr
-                player_info["treatment"] = treatment
-                player_info["gender"] = player.in_round(1).gender
+                player_info["1_date"] = timestr
+                player_info["2_treatment"] = treatment
+                player_info["3_gender"] = player.in_round(1).gender
                 for round_pointscore in player.get_player_point_score_in_rounds(1, 3):
                     player_info[f"round_score{index_}"] = round_pointscore
                     index_ += 1
@@ -112,31 +128,33 @@ class Subsession(BaseSubsession):
                 player_info["winning_1"] = player.in_round(2).winning
                 player_info["winning_2"] = player.in_round(3).winning
                 try:
-                    player_info["room_name"] = player.in_round(1).participant.label[0:5]
-                    player_info["pc_name"] = player.in_round(1).participant.label[6:]
-                    player_info["other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
-                    player_info["other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
+                    player_info["4_room_name"] = player.in_round(1).participant.label[0:5]
+                    player_info["5_pc_name"] = player.in_round(1).participant.label[6:]
+                    player_info["6_other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
+                    player_info["7_other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
                 except(TypeError):
                     pass
                 player_info["slightly_behind_to"] = player.sb_options
                 player_info["slightly_ahead_to"] = player.sa_options
+                player_info["8_index_of_paired_past_player"] = player.index_of_paired_past_player
+                player_info["score_position"] = player.score_position
                 df = df.append(player_info, ignore_index=True)
                 player_info = {}
-            #columns = ["date", "treatment", "gender", "room_name", "pc_name", "round_score_0", "round_score_1", "round_score_2",
-             #          "winning_1", "winning_1",]
 
             # csv generation
             # if add_to_central_DB == 1, also update CSR (all sessions combined df)
-            if self.session.config["add_to_central_DB"]:
+            if self.session.config["add_to_central_DB"] == 1:
                 if not os.path.isfile(f"{file_dir}\\Central_Score_Records.json"):
                     df.to_json(f"{file_dir}\\Central_Score_Records.json")
                     df.to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
-                csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
-                # TODO?: concat(keys=treatments),
-                df.reset_index(inplace=True, drop=True)
-                csr.reset_index(inplace=True, drop=True) #  TODO: now to check if it does not fuck up previous csr
-                pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
-                pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
+                else:
+                    csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
+                    # TODO?: concat(keys=treatments),
+                    df.reset_index(inplace=True, drop=True)
+                    csr.reset_index(inplace=True, drop=True) #  TODO: now to check if it does not fuck up previous csr
+                    pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
+                    pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx",
+                                                                     engine="xlsxwriter")
 
             # Always create session records
             df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
@@ -170,14 +188,6 @@ class Subsession(BaseSubsession):
 
         create_score_records()
         create_payfile()
-
-    def determine_winner(self, player1_points, player2_points):
-        if player1_points > player2_points:
-            return [1.0, 0.0]
-        elif player1_points < player2_points:
-            return [0.0, 1.0]
-        else:
-            return [0.5, 0.5]
 
 
 class Group(BaseGroup):
@@ -238,7 +248,7 @@ class Player(BasePlayer):
     paired_past_player_round_2_points = models.IntegerField()
     sb_options = models.StringField()
     sa_options = models.StringField()
-    score_position = models.StringField()
+    score_position = models.StringField(initial="T0")
     # DEBUG ONLY
     Ts_score_difference = models.IntegerField()
 
@@ -267,21 +277,12 @@ class Player(BasePlayer):
 
     # Set index_of_paired_past_player, score_position and if possible sb_options + sa_options vars
     def get_pairs_with_past_player(self, sub_table, treatment=1):
-        print(sub_table)
 
         def pair_with_random_past_player(sub_table, results_dict):
-            excluded_indexed = results_dict["slightly_behind_to"] + results_dict["slightly_ahead_to"]
             full_list = sub_table.index.tolist()
-            for index in excluded_indexed:
-                full_list.remove(index)
             opponent_index = random.sample(full_list, 1)[0]
             self.index_of_paired_past_player = opponent_index
-            # Opponents score higher than mine FB (SB & SA should be excluded)
-            if sub_table.loc[opponent_index]["round_1"] > self.get_player_point_score_in_rounds(2, 2):
 
-                self.score_position = "far_behind"
-            else:
-                self.score_position = "far_ahead"
 
         # Main body of function
         spread = int(self.session.config["pairing_filter_margin"])
@@ -290,10 +291,7 @@ class Player(BasePlayer):
                             slightly_ahead_to=[],)
 
         sub_table = sub_table[sub_table["treatment"] == (self.session.config["treatment"] - 1)]
-        print(f"Before: {sub_table}")
         sub_table = sub_table[sub_table["gender"] == self.in_round(1).gender]
-        print(f"After: {sub_table}")
-
 
         # SB filtering #
         filtered_table = sub_table[sub_table["round_1"] > my_score]
@@ -322,18 +320,33 @@ class Player(BasePlayer):
         else:
             pair_with_random_past_player(sub_table, results_dict)
 
-        if "ahead" in self.score_position:
-            self.winning = 1
-        else:
-            self.winning = 0
+        pp_r1 = sub_table.loc[self.index_of_paired_past_player]["round_1"]
+        pp_r2 =  sub_table.loc[self.index_of_paired_past_player]["round_2"]
+
         # Add point of paired player to self.attributes
-        self.paired_past_player_round_1_points = sub_table.loc[self.index_of_paired_past_player]["round_1"]
-        self.paired_past_player_round_2_points = sub_table.loc[self.index_of_paired_past_player]["round_2"]
+        self.paired_past_player_round_1_points = pp_r1
+        self.paired_past_player_round_2_points = pp_r2
+
+        if pp_r1 > my_score:
+            if pp_r1 <= (my_score + spread):
+                self.score_position = "slightly_behind"
+            else:
+                self.score_position = "far_behind"
+        elif pp_r1 < my_score:
+            if pp_r1 >= (my_score - spread):
+                self.score_position = "slightly_ahead"
+            else:
+                self.score_position = "far_ahead"
+        else:
+            self.score_position = "equal_position"
+
+
 
     # being called only in last round
     def calculate_winner_t1_t2(self):
-        my_points = self.get_player_point_score_in_rounds(3, 3)[0]
-        past_player_points = self.in_round(2).paired_past_player_round_2_points
+        my_points = sum(self.get_player_point_score_in_rounds(2, 3))
+        past_player_points = self.in_round(2).paired_past_player_round_2_points + self.in_round(
+            2).paired_past_player_round_1_points
         print(my_points, past_player_points)
         self.winning = self.subsession.determine_winner(my_points, past_player_points)[0]
 

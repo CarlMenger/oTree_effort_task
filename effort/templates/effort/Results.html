@@ -13,6 +13,23 @@
     }
 </style>
 
+
+<div>
+    <p>
+        You have scored {{ point_score }} points. Now you have 30 seconds to take a breather. You can see the remaining
+        time below.
+
+        {% if treatment == 1 %}
+        {{ score_position}}
+
+        {% elif treatment == 2 %}
+        {{ score_position}}
+
+        {% endif %}
+        <p id="counterTag"> Next round will begin in: <span id="countdown"> 30 </span>.</p>
+</div>
+
+
 <script>
 
     var seconds = 30,
@@ -26,15 +43,6 @@
       })();
 
 </script>
-<div>
-    <p>
-        You have scored {{ point_score }} points. Now you have 30 seconds to take a breather. You can see the remaining
-        time below.
-
-        <p id="counterTag"> Next round will begin in: <span id="countdown"> 30 </span> seconds.</p>
-
-
-</div>
 
 
 {% endblock %}

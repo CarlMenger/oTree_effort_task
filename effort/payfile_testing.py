@@ -142,5 +142,7 @@ def create_subtable():
 
 
 sub_table = opened_file[wanted_data_columns]
-print(sub_table.to_string())
+#print(sub_table.to_string())
 
+full_table= opened_file
+print(full_table[wanted_data_columns].dropna().to_string())

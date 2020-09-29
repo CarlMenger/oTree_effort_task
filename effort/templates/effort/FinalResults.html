@@ -15,31 +15,15 @@
 
     <p>
         Good job, you've made it to the end of this experiment but the session is not over yet. You have scored
-        {{  point_score_1 }} and {{  point_score_2 }} points. ({{ total_point_score }} points combined).
-        Results of this part will be revealed to you at the end of the session. Monetary reward from this experiment will be automatically added to your final reward
-        for participating.
+        {{ point_score_1 }} and {{ point_score_2 }} points. ({{ total_point_score }} points combined).
+        Results of this part will be revealed to you at the end of the session. Monetary reward from this experiment
+        will be automatically added to your final reward for participating.
     </p>
     <p>
-    Pressing the button down
-        bellow will quit the browser and send you to the next experiment.
+    Please exit the browser to continue the session.
     </p>
 
-        <title>An example</title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script>
-            function quit_browser() {
-                self.driver.quit();
-                });
-            }
-        </script>
 
-    <body>
-        <button onclick="quit_browser();"></button>
-    </body>
-
-
-
-    {% next_button %}
 {% endblock %}
 
 

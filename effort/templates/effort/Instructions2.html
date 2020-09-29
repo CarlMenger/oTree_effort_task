@@ -10,33 +10,56 @@
     {% if treatment == 1 %}
     <p>
 
-        In the next part, you will be divided randomly into pairs. This part will consist of two identical rounds just
-        like the one you just finished. Each round will take 30 seconds. Your task remains to press A and B according
-        to sequence displayed on the display. You will be awarded a point for every correct sequence. After the first
-        round, you will be shown your results, including information about your position relative to your opponent.
-        After the second round, you will see a summary of points you scored.
+        In the next part, you will be divided randomly into pairs. This part will consist
+        of two identical rounds just
+        like the one you just finished. Each round will take 30 seconds. Your task
+        remains to press A and B according
+        to sequence displayed on the display. You will be awarded a point for every
+        correct sequence. After the first
+        round, you will be shown your results, including information about your position
+        relative to your opponent.
+        After the second round, you will see a summary of points you scored. If your sum
+        of points from both rounds is
+        higher than that of your partner, you will receive the reward of {{ winning_reward }} CZK,
+        otherwise you will receive 0 CZK.
 
     </p>
     {% elif treatment == 2 %}
     <p>
 
-        In the next part, you will be divided randomly into pairs. This part will consist of two identical rounds just
+        In the next part, you will be divided randomly into pairs. This part will consist
+        of two identical rounds just
         like the one you just finished. Each round will take 30 seconds.
-        Your task remains to press A and B according to sequence displayed on the display.
+        Your task remains to press A and B according to sequence displayed on the
+        display.
         You
-        will be awarded a point for every correct sequence. After the first round, you will be shown your results,
-        including information about your position relative to your opponent, your opponent will also
-        receive similar information. After the second round, you will see a summary of points you scored.
+        will be awarded a point for every correct sequence. After the first round, you
+        will be shown your results,
+        including information about your position relative to your opponent, your
+        opponent will also
+        receive information about his/her relative standing. After the
+        second round, you will see a summary of points you scored. If your sum of points from
+        both rounds is
+        higher than that of your partner, you will receive the reward of {{ winning_reward }} CZK,
+        otherwise you will receive 0 CZK.
+
+
 
     </p>
     {% else %}
     <p>
-        In the rest of this experiment, you will be paired with another participant who is sitting in this room. This
-        part will consist of two identical rounds just like the one you just finished. Each round will take 30 seconds.
-        Your task is to press a and b alternatively. You will be awarded a point for every correct sequence. After the
-        each round, you will be shown a table with a summary of your results. If your sum of points from both rounds is
-        higher than that of your partner, you will receive the reward of 50 CZK, otherwise you will receive 0 CZK. You
-        will receive the information about whether you won or lost at the end of the experimental session.
+        In the rest of this experiment, you will be paired with another participant who
+        is sitting in this room. This
+        part will consist of two identical rounds just like the one you just finished.
+        Each round will take 30 seconds.
+        Your task is to press a and b alternatively. You will be awarded a point for
+        every correct sequence. After the
+        each round, you will be shown a table with a summary of your results. If your sum
+        of points from both rounds is
+        higher than that of your partner, you will receive the reward of {{ winning_reward }} CZK,
+        otherwise you will receive 0 CZK. You
+        will receive the information about whether you won or lost at the end of the
+        experimental session.
 
     </p>
 {% endif %}
