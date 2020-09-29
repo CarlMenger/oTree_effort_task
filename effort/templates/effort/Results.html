@@ -7,23 +7,44 @@
 
 {% block content %}
 
+<style>
+    .otree-timer {
+        display: none;
+    }
+</style>
 
-    <table class="table">
-        <tr>
-            <td>Your score this round:</td>
-            <td>Points: {{ player.point_score}} </td>
-            {% if player.round_number != 1 %}
-            {% endif %}
-    </table>
 
-    <table class="table">
-        <tr>
-            <td>All players score</td>
-            <td>{{ subsession.point_score_everyone}}</td>
+<div>
+    <p>
+        You have scored {{ point_score }} points. Now you have 30 seconds to take a breather. You can see the remaining
+        time below.
 
-    </table>
+        {% if treatment == 1 %}
+        {{ score_position}}
 
-    {% next_button %}
+        {% elif treatment == 2 %}
+        {{ score_position}}
+
+        {% endif %}
+        <p id="counterTag"> Next round will begin in: <span id="countdown"> 30 </span>.</p>
+</div>
+
+
+<script>
+
+    var seconds = 30,
+    $seconds = document.querySelector("#countdown");
+
+    (function countdown() {
+      $seconds.textContent = seconds-- + " seconds"
+      if (seconds >= 0) {
+        setTimeout(countdown, 1000)
+      }
+      })();
+
+</script>
+
+
 {% endblock %}
 
 

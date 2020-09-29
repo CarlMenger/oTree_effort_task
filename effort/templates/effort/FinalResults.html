@@ -2,17 +2,28 @@
 {% load otree static %}
 
 {% block title %}
-    Results
+    Final Stage
 {% endblock %}
 
 {% block content %}
-    <table class="table">
-        <tr>
-            <td>Your total payoff this session:</td>
-            <td>{{participant.payoff}}
-        </tr>
-    </table>
-    {% next_button %}
+
+<style>
+    .otree-timer {
+        display: none;
+    }
+</style>
+
+    <p>
+        Good job, you've made it to the end of this experiment but the session is not over yet. You have scored
+        {{ point_score_1 }} and {{ point_score_2 }} points. ({{ total_point_score }} points combined).
+        Results of this part will be revealed to you at the end of the session. Monetary reward from this experiment
+        will be automatically added to your final reward for participating.
+    </p>
+    <p>
+    Please exit the browser to continue the session.
+    </p>
+
+
 {% endblock %}
 
 
