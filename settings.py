@@ -8,7 +8,7 @@ from os import environ
 
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
-    winning_bonus=50.00, file_dir="Z:\\Both\\DP_Git\\Otree_data_dumps", resultsPage_timeout=30,
+    winning_bonus=50.00, file_dir="D:\\__OTree\\__DP - effort task\\TestDataDumps", resultsPage_timeout=30,
 )
 
 SESSION_CONFIGS = [
@@ -75,3 +75,6 @@ INSTALLED_APPS = ["otree"]
 
 DATABASE_URL = "postgres://postgres@localhost/django_db"
 REDIS_URL = "redis://localhost:6379"
+
+#DEBUG = False
+#PRODUCTION = 1

@@ -79,7 +79,7 @@ class Subsession(BaseSubsession):
 
         # Load and format json DF into reduced version
         if self.session.config["treatment"] > 0:
-            wanted_data_columns = ["treatment", "gender", "round_1", "round_2", "winning_1", "winning_2", ]
+            wanted_data_columns = ["treatment", "gender", "round_score_1", "round_score_2", "winning_1", "winning_2", ]
             # FIXME: wanted_data_columns in more general location ?
             file_dir = self.session.config["file_dir"]
             df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
@@ -115,28 +115,28 @@ class Subsession(BaseSubsession):
             df = pd.DataFrame()
             for player in self.get_players():
                 index_ = 0
-                player_info["1_date"] = timestr
-                player_info["2_treatment"] = treatment
-                player_info["3_gender"] = player.in_round(1).gender
+                player_info["date"] = timestr
+                player_info["treatment"] = treatment
+                player_info["gender"] = player.in_round(1).gender
                 for round_pointscore in player.get_player_point_score_in_rounds(1, 3):
-                    player_info[f"round_score{index_}"] = round_pointscore
+                    player_info[f"round_score_{index_}"] = round_pointscore
                     index_ += 1
                 index_ = 0
                 for p_in_round in player.in_rounds(1, 3):
-                    player_info[f"round_keystrokes{index_}"] = p_in_round.overall_keystroke_count
+                    player_info[f"round_keystrokes_{index_}"] = p_in_round.overall_keystroke_count
                     index_ += 1
                 player_info["winning_1"] = player.in_round(2).winning
                 player_info["winning_2"] = player.in_round(3).winning
                 try:
-                    player_info["4_room_name"] = player.in_round(1).participant.label[0:5]
-                    player_info["5_pc_name"] = player.in_round(1).participant.label[6:]
-                    player_info["6_other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
-                    player_info["7_other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
+                    player_info["room_name"] = player.in_round(1).participant.label[0:5]
+                    player_info["pc_name"] = player.in_round(1).participant.label[6:]
+                    player_info["other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
+                    player_info["other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
                 except(TypeError):
                     pass
                 player_info["slightly_behind_to"] = player.sb_options
                 player_info["slightly_ahead_to"] = player.sa_options
-                player_info["8_index_of_paired_past_player"] = player.index_of_paired_past_player
+                player_info["index_of_paired_past_player"] = player.index_of_paired_past_player
                 player_info["score_position"] = player.score_position
                 df = df.append(player_info, ignore_index=True)
                 player_info = {}
@@ -294,8 +294,8 @@ class Player(BasePlayer):
         sub_table = sub_table[sub_table["gender"] == self.in_round(1).gender]
 
         # SB filtering #
-        filtered_table = sub_table[sub_table["round_1"] > my_score]
-        filtered_table = filtered_table[filtered_table["round_1"] <= my_score + spread]
+        filtered_table = sub_table[sub_table["round_score_1"] > my_score]
+        filtered_table = filtered_table[filtered_table["round_score_1"] <= my_score + spread]
         if self.session.config["treatment"] == 2:
             filtered_table = filtered_table[filtered_table["winning_1"] == 1]
         # at least one match in SB
@@ -303,8 +303,8 @@ class Player(BasePlayer):
             results_dict["slightly_behind_to"] = filtered_table.index.tolist()
 
             # SA filtering #
-            filtered_table = sub_table[sub_table["round_1"] < my_score]
-            filtered_table = filtered_table[filtered_table["round_1"] >= my_score + spread]
+            filtered_table = sub_table[sub_table["round_score_1"] < my_score]
+            filtered_table = filtered_table[filtered_table["round_score_1"] >= my_score + spread]
             if self.session.config["treatment"] == 2:
                 filtered_table = filtered_table[filtered_table["winning_1"] == 0]
             if len(filtered_table.index):
@@ -320,8 +320,8 @@ class Player(BasePlayer):
         else:
             pair_with_random_past_player(sub_table, results_dict)
 
-        pp_r1 = sub_table.loc[self.index_of_paired_past_player]["round_1"]
-        pp_r2 =  sub_table.loc[self.index_of_paired_past_player]["round_2"]
+        pp_r1 = sub_table.loc[self.index_of_paired_past_player]["round_score_1"]
+        pp_r2 = sub_table.loc[self.index_of_paired_past_player]["round_score_2"]
 
         # Add point of paired player to self.attributes
         self.paired_past_player_round_1_points = pp_r1
