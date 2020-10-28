@@ -32,7 +32,7 @@ df2 = [list(a) for a in zip(names, scores_r1, scores_r2, scores_r3)]
 
 input_df = pd.read_csv("D:\\__OTree\\__DP - effort task\\TestDataDumps\\pd_test.txt")
 
-wanted_data_columns = ["treatment", "gender", "round_1", "round_2", "winning_1", "winning_2", ]
+wanted_data_columns = ["treatment", "gender", "round_score_1", "round_score_2", "winning_1", "winning_2", ]
 path = "D:\\__OTree\\__DP - effort task\\TestDataDumps\\Central_Score_Records.json"
 opened_file = pd.read_json(path)
 
@@ -105,7 +105,7 @@ def data_handling():
     return data_dict
 
 
-past_players = data_handling()
+#past_players = data_handling()
 
 
 def create_subtable():
@@ -116,14 +116,14 @@ def create_subtable():
     sub_table = sub_table[sub_table["treatment"] == 1 - 1]
     sub_table = sub_table[sub_table["gender"] == 0]
     # SB & SA filtering
-    filtered_table = sub_table[sub_table["round_1"] > my_score]
-    filtered_table = filtered_table[filtered_table["round_1"] <= my_score + 3]
+    filtered_table = sub_table[sub_table["round_score_1"] > my_score]
+    filtered_table = filtered_table[filtered_table["round_score_1"] <= my_score + 3]
     # at least one match
     if len(filtered_table.index):
         results_dict["slightly_behind_to"] = filtered_table.index.tolist()
         print(results_dict["slightly_behind_to"])
-        filtered_table = sub_table[sub_table["round_1"] < my_score]
-        filtered_table = filtered_table[filtered_table["round_1"] >= my_score + 3]
+        filtered_table = sub_table[sub_table["round_score_1"] < my_score]
+        filtered_table = filtered_table[filtered_table["round_score_1"] >= my_score + 3]
         if len(filtered_table.index):
             results_dict["slightly_ahead_to"] = filtered_table.index.tolist()
             #self.score_position = random.sample(results_dict.keys(), 1)[0]
@@ -140,9 +140,11 @@ def create_subtable():
 
 
 
-
+results_dict = {"empty":""}
 sub_table = opened_file[wanted_data_columns]
-#print(sub_table.to_string())
+print(sub_table.to_string())
 
-full_table= opened_file
-print(full_table[wanted_data_columns].dropna().to_string())
+results_dict["slightly_ahead_to"] = sub_table.index.tolist()
+if results_dict["slightly_ahead_to"]:
+    print("i pass")
+print(str(results_dict["slightly_ahead_to"])[1:-1])
