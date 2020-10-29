@@ -1,5 +1,5 @@
-from os import environ
-
+#from os import environ, os
+import os
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
@@ -7,8 +7,8 @@ from os import environ
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=True, conversion_rate=0.00,
-    winning_bonus=50.00, file_dir="effort\\data", resultsPage_timeout=30,
+    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
+    winning_bonus=50.00, file_dir="_static\\effort\\data", resultsPage_timeout=30,
 )
 
 SESSION_CONFIGS = [
@@ -54,7 +54,7 @@ SESSION_CONFIGS = [
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans
-LANGUAGE_CODE = "cz"
+LANGUAGE_CODE = "en-us"
 
 # e.g. EUR, GBP, CNY, JPY
 REAL_WORLD_CURRENCY_CODE = "CZK"
@@ -88,6 +88,10 @@ environ["REDIS_URL"] = "redis://localhost:6379"
 environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
 environ["OTREE_AUTH_LEVEL"] = "STUDY" """
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, SESSION_CONFIG_DEFAULTS["file_dir"])]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
 
-DEBUG = True
-PRODUCTION = 0
+OTREE_AUTH_LEVEL = "STUDY"
+DEBUG = False
+PRODUCTION = 1
