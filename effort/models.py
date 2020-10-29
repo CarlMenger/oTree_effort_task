@@ -240,7 +240,7 @@ class Player(BasePlayer):
     paired_past_player_round_2_points = models.IntegerField()
     sb_options = models.StringField()
     sa_options = models.StringField()
-    score_position = models.StringField()
+    score_position = models.StringField(initial="T0")
     # DEBUG ONLY
     Ts_score_difference = models.IntegerField()
 
@@ -334,7 +334,8 @@ class Player(BasePlayer):
         self.paired_past_player_round_2_points = pp_r2
         self.calculate_winner_t1_t2_for_rounds(1, 1)
 
-        if not self.score_position:  # FIXME: after testing delete error parts and simplify
+        if not self.score_position or self.score_position == "T0":
+            # FIXME: after testing delete error parts and simplify
             if pp_r1 > my_score:
                 if pp_r1 <= (my_score + spread):
                     self.score_position = "error1"
