@@ -91,9 +91,9 @@ environ["OTREE_AUTH_LEVEL"] = "STUDY" """
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
+"""STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = "/static/"
+STATIC_URL = "/static/""""
 
 OTREE_AUTH_LEVEL = "STUDY"
 DEBUG = False
