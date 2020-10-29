@@ -89,7 +89,9 @@ environ["REDIS_URL"] = "redis://localhost:6379"
 environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
 environ["OTREE_AUTH_LEVEL"] = "STUDY" """
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, SESSION_CONFIG_DEFAULTS["file_dir"])]
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR," _static/effort/data")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/"
 
