@@ -1,7 +1,7 @@
 import os
 from os import environ
 
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
 # the session config can be accessed from methods in your apps as self.session.config,
@@ -9,7 +9,7 @@ from os import environ
 
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
-    winning_bonus=50.00, file_dir="_static\\effort\\data", resultsPage_timeout=30,
+    winning_bonus=50.00, file_dir=["effort", "data"], resultsPage_timeout=30, generate_payfile=False,
 )
 
 SESSION_CONFIGS = [
@@ -87,14 +87,15 @@ INSTALLED_APPS = ["otree"]
 """environ["DATABASE_URL"] = "postgres://postgres@localhost/django_db"
 environ["REDIS_URL"] = "redis://localhost:6379"
 environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
-environ["OTREE_AUTH_LEVEL"] = "STUDY" """
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-"""STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
+environ["OTREE_AUTH_LEVEL"] = "STUDY" 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/" """
 
-OTREE_AUTH_LEVEL = "STUDY"
-DEBUG = False
+if environ.get('OTREE_PRODUCTION') not in {None, '', '0'}:
+    DEBUG = False
+else:
+    DEBUG = True
+
+environ["OTREE_AUTH_LEVEL"] = "STUDY"
 PRODUCTION = 1

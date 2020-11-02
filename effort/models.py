@@ -44,6 +44,9 @@ class Constants(BaseConstants):
     date_time = time.asctime(time.localtime(time.time()))
     results_page_timeout_seconds = 30
     task_stage_timeout_seconds = 35  # 30 sec game time + 5 sec prep time
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(BASE_DIR, "effort", "data")
+    dir_path = models.StringField(initial=path)
 
 
 class Subsession(BaseSubsession):
@@ -72,7 +75,7 @@ class Subsession(BaseSubsession):
         if self.session.config["treatment"] > 0:
             wanted_data_columns = ["treatment", "gender", "round_score_1", "round_score_2", "winning_1", "winning_2", ]
             # FIXME: wanted_data_columns in more general location ?
-            file_dir = self.session.config["file_dir"]
+            file_dir = Constants.path
             df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
             sub_table = df_csr[wanted_data_columns]
             # drop NAN rows
@@ -98,7 +101,7 @@ class Subsession(BaseSubsession):
 
         def create_score_records():
             timestr = time.strftime("%Y_%m_%d-%H_%M")
-            file_dir = self.session.config["file_dir"]
+            file_dir = Constants.path
             treatment = self.session.config["treatment"]
 
             # data lists # TODO more relaible version, where order of lines of code is not deteriminal to
@@ -124,7 +127,7 @@ class Subsession(BaseSubsession):
                     player_info["pc_name"] = player.in_round(1).participant.label[6:]
                     player_info["other_room_name"] = player.get_others_in_group()[0].participant.label[0:5]
                     player_info["other_pc_name"] = player.get_others_in_group()[0].participant.label[6:]
-                except(TypeError):
+                except TypeError:
                     pass
                 player_info["slightly_behind_to"] = player.in_round(2).sb_options
                 player_info["slightly_ahead_to"] = player.in_round(2).sa_options
@@ -151,10 +154,10 @@ class Subsession(BaseSubsession):
             # Always create session records
             df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
 
-        # User friendly excel and txt for payment administration in offline mode
+        # User friendly excel and for payment administration in offline mode
         def create_payfile():  # TODO: Outside offline mode this is redundant and might require reworking
             timestr = time.strftime("%Y_%m_%d-%H_%M")
-            file_dir = self.session.config["file_dir"]
+            file_dir = Constants.path
             payments = [player.get_player_endowment() for player in self.get_players()]
             winning = [player.winning for player in self.get_players()]
             pc_names = [player.participant.label for player in self.get_players()]
@@ -162,13 +165,13 @@ class Subsession(BaseSubsession):
                 payfile_data = dict(pc_name=pc_names,
                                     payment=payments,
                                     has_won=winning, )
-            except(TypeError):
+            except TypeError:
                 pc_names = [pc for pc in range(len(pc_names))]
                 payfile_data = dict(pc_name=pc_names,
                                     payment=payments,
                                     has_won=winning, )
-            # txt generation
-            pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
+            # zTree style pay file generation
+            #pd.DataFrame(payfile_data).to_csv(f"{file_dir}\\payfile_{timestr}.txt", sep="\t")
             pd.DataFrame(payfile_data).to_excel(f"{file_dir}\\payfile_{timestr}.xlsx", engine='xlsxwriter')
 
         # Last round call for winning_1, winning_2, total_points
@@ -177,12 +180,14 @@ class Subsession(BaseSubsession):
         else:
             [player.calculate_winner_t1_t2_for_rounds(1, 2) for player in self.get_players()]
 
-        # Last round call to create dataframes and payfile
+        # In last round call to create dataframes and payfile
         create_score_records()
-        create_payfile()
+        if self.session.config["generate_payfile"]:
+            create_payfile()
 
 
 class Group(BaseGroup):
+
     def calculate_points_wins_payments_t0(self):
         # Load up players in this group
         p1, p2 = self.get_players()
@@ -213,6 +218,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+
     label = models.StringField()  # REWRITE ME
     pc_name = models.IntegerField()  # REWRITE ME
     # Questionnaires vars
@@ -242,7 +248,10 @@ class Player(BasePlayer):
     sa_options = models.StringField()
     score_position = models.StringField(initial="T0")
     # DEBUG ONLY
+    """    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(BASE_DIR, "effort", "data")
     Ts_score_difference = models.IntegerField()
+    dir_path = models.StringField(initial=path)"""
 
     def pc_name_choices(self):
         if self.room_name == 205:
