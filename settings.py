@@ -98,4 +98,5 @@ else:
     DEBUG = True
 
 environ["OTREE_AUTH_LEVEL"] = "STUDY"
+environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
 PRODUCTION = 1

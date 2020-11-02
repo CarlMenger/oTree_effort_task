@@ -46,10 +46,11 @@ class Constants(BaseConstants):
     task_stage_timeout_seconds = 35  # 30 sec game time + 5 sec prep time
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(BASE_DIR, "effort", "data")
-    dir_path = models.StringField(initial=path)
 
 
 class Subsession(BaseSubsession):
+
+    dir_path = models.StringField(initial=Constants.path)
 
     # Grouping set up
     def creating_session(self):
@@ -142,6 +143,7 @@ class Subsession(BaseSubsession):
                 if not os.path.isfile(f"{file_dir}\\Central_Score_Records.json"):
                     df.to_json(f"{file_dir}\\Central_Score_Records.json")
                     df.to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
+                    print("I did not found an file")
                 else:
                     csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
                     # TODO?: concat(keys=treatments),
@@ -150,6 +152,7 @@ class Subsession(BaseSubsession):
                     pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
                     pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx",
                                                                      engine="xlsxwriter")
+                    print("I found an file!!!")
 
             # Always create session records
             df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
