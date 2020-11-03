@@ -143,7 +143,6 @@ class Subsession(BaseSubsession):
                 if not os.path.isfile(f"{file_dir}\\Central_Score_Records.json"):
                     df.to_json(f"{file_dir}\\Central_Score_Records.json")
                     df.to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
-                    print("I did not found an file")
                 else:
                     csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
                     # TODO?: concat(keys=treatments),
@@ -152,7 +151,6 @@ class Subsession(BaseSubsession):
                     pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
                     pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx",
                                                                      engine="xlsxwriter")
-                    print("I found an file!!!")
 
             # Always create session records
             df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
