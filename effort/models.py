@@ -287,7 +287,7 @@ class Player(BasePlayer):
             index_all = sub_table.index.tolist()
             all_disallowed_indexes = disallowed_indexes + list(position_options.values())
             flat_list = [item for sublist in all_disallowed_indexes for item in sublist]
-            index_clean = [index for index in index_all if index not in flat_list]
+            index_clean = [index for index in index_all if index not in flat_list]  # FIXME: assert for empty list?
             opponent_index = random.sample(index_clean, 1)[0]
             self.index_of_paired_past_player = opponent_index
             #print(f"{self.participant_label()} says: I was randomly matched")

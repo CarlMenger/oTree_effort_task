@@ -10,6 +10,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
     winning_bonus=50.00, file_dir=["effort", "data"], resultsPage_timeout=30, generate_payfile=False,
+    add_to_central_DB=True,
+
 )
 
 SESSION_CONFIGS = [
@@ -19,8 +21,6 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=0,
-        add_to_central_DB=1,
-
 
     ),
     dict(
@@ -29,7 +29,6 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=1,
-        add_to_central_DB=1,
         pairing_filter_margin=2,
 
     ),
@@ -39,7 +38,6 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=2,
-        add_to_central_DB=1,
         pairing_filter_margin=2,
 
     ),
