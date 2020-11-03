@@ -1,0 +1,210 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+   
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'back_button_v1/js/prev_next_button.js' %}"></script>
+
+{% endblock %}
+
+
+{% block styles %}
+
+<link href="{% static 'back_button_v1/css/custom.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Tab navigation -->
+<ul class="nav nav-tabs   fixed-top navbar-light bg-light justify-content-center" id="myTab" role="tablist">
+  
+
+  <li class="nav-item">
+    <a class="nav-link active" id="part1-tab" data-toggle="tab" href="#part1" role="tab" aria-controls="part1" onclick="topFunction()"> Tab 1 
+</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="part2-tab" data-toggle="tab" href="#part2" role="tab" aria-controls="part2" onclick="topFunction()">Tab 2</a>
+  </li>
+
+
+<li class="nav-item">
+    <a class="nav-link" id="part3-tab" data-toggle="tab" href="#part3" role="tab" aria-controls="part3" onclick="topFunction()">Tab 3</a>
+  </li>
+
+</ul>
+<br>
+<br>
+
+
+<!-- Tab content -->
+<div class="tab-content" id="myTabContent">
+
+  <div class="tab-pane show active" id="part1" role="tabpanel" aria-labelledby="part1-tab">
+
+
+<div class="card-header bg-transparent mainheader" >
+ <h3 class="card-title font-weight-bold mt-3 mb-3"> Tab 1 
+ </h3>
+  </div>
+<br>
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+
+<button onclick="topFunction()" type="button" class="nexttab btn-primary btn next">Next</button>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="tab-pane" id="part2" role="tabpanel" aria-labelledby="part2-tab">
+
+
+<div class="card-header bg-transparent mainheader" >
+ <h3 class="card-title font-weight-bold mt-3 mb-3"> Tab 2 </h3>
+  </div>
+<br>
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+
+    <button onclick="topFunction()" type="button" class="prevtab btn-primary btn back">Back</button>
+<button onclick="topFunction()" type="button" class="nexttab btn-primary btn next">Next</button>
+  </div>
+
+
+
+
+
+  <div class="tab-pane" id="part3" role="tabpanel" aria-labelledby="part3-tab">
+ 
+
+<div class="card-header bg-transparent mainheader" >
+ <h3 class="card-title font-weight-bold mt-3 mb-3">Tab 3 </h3>
+  </div>
+<br>
+    
+
+    <p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis et libero et viverra. Fusce et lorem tortor. Donec blandit eleifend auctor. Nulla sed metus sit amet augue mollis faucibus. Maecenas at consequat lorem, vel varius lectus. In at sem ac lectus mollis pulvinar nec feugiat neque. Integer vel tincidunt nunc, vehicula maximus orci.
+</p>
+<p>
+Fusce egestas fringilla urna eu lobortis. Pellentesque in hendrerit diam. Maecenas at orci ac ipsum ultrices pretium maximus in eros. Phasellus sit amet dolor erat. Aenean fermentum, tellus a dictum dignissim, lorem lacus ornare justo, a ullamcorper massa arcu sed nisi. Nulla at lacinia risus. Morbi lacinia enim nec nulla tempus, gravida pellentesque enim aliquam. Suspendisse non bibendum ex. Donec rhoncus turpis augue, et molestie lorem convallis ut. Nullam bibendum ex in laoreet fringilla.
+</p>
+<p>
+In id pellentesque augue, at mattis massa. Mauris lobortis convallis enim, a consectetur ipsum mattis ut. Nulla ac lectus a erat dignissim interdum. Praesent libero quam, tristique sit amet eros sed, accumsan ullamcorper mi. Suspendisse quis nisl ut massa pretium accumsan vitae sit amet nulla. Fusce molestie pellentesque est, tincidunt lacinia nisl convallis auctor. Sed blandit, tortor in euismod congue, mauris urna tincidunt lorem, volutpat varius dolor diam ut urna. Nam venenatis lacus nec ante condimentum, sit amet ullamcorper sem vulputate. Mauris pharetra suscipit aliquet. Nullam tempor leo nec erat sodales, id venenatis dolor lobortis. Pellentesque fermentum, odio eget faucibus commodo, velit purus congue quam, ut maximus nisi est sit amet purus. Nunc vestibulum non ipsum sed facilisis.
+</p>
+<p>
+Duis auctor risus sed tempor gravida. Cras blandit accumsan dolor a porta. Suspendisse commodo malesuada bibendum. Donec rhoncus sapien ut ante placerat consectetur. Fusce imperdiet et eros sit amet placerat. Fusce ligula erat, pharetra sed lorem sit amet, sagittis pharetra nisl. Quisque sed ante sed dui dapibus bibendum. In sit amet lacus gravida, mollis urna in, aliquam ex. Praesent at ante a mi pulvinar cursus.
+</p>
+<p>
+Quisque eu finibus elit. Cras in ultricies massa, vitae interdum justo. Integer mattis aliquet ipsum volutpat vehicula. Ut sapien metus, ornare in nisl eu, venenatis finibus nisl. Quisque suscipit porta erat, id condimentum purus feugiat quis. Duis euismod turpis vel malesuada aliquam. Integer non felis lobortis, commodo tellus et, finibus ligula. Nulla facilisi. Phasellus nec aliquam leo. Aliquam enim quam, sodales vitae tempor sit amet, laoreet nec nisi. 
+</p>
+
+    <button onclick="topFunction()" type="button" class="prevtab btn-primary btn back">Back</button>
+<button class="nexttab btn-primary btn next">Next</button>
+  </div>
+
+
+</div>
+
+</body>
+
+
+{% endblock %}
+
+
+

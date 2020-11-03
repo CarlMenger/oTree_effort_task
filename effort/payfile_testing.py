@@ -105,7 +105,7 @@ def data_handling():
     return data_dict
 
 
-past_players = data_handling()
+#past_players = data_handling()
 
 
 def create_subtable():
@@ -141,8 +141,15 @@ def create_subtable():
 
 
 
-sub_table = opened_file[wanted_data_columns]
+#sub_table = opened_file[wanted_data_columns]
 #print(sub_table.to_string())
 
-full_table= opened_file
-print(full_table[wanted_data_columns].dropna().to_string())
+#full_table= opened_file
+#print(full_table[wanted_data_columns].dropna().to_string())
+
+
+input_a = "0 0 0 0 . ."
+list_a = (list(input_a))
+node_list = [node for node in list_a if (node == "0" or node == ".")]
+
+print(list(node_list))
