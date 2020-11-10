@@ -2,14 +2,15 @@ import os
 from os import environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
 # the session config can be accessed from methods in your apps as self.session.config,
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=False, conversion_rate=0.00,
-    winning_bonus=50.00, file_dir=["effort", "data"], resultsPage_timeout=30, generate_payfile=False,
+    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=True, conversion_rate=0.00,
+    winning_bonus=50.00, resultsPage_timeout=30, generate_payfile=False, use_db=True,
     add_to_central_DB=True,
 
 )
@@ -70,7 +71,7 @@ ROOMS = [
 #OTREE_AUTH_LEVEL = "STUDY"
 ADMIN_USERNAME = "admin"
 # for security, best to set admin password in an environment variable
-ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")
+
 
 DEMO_PAGE_INTRO_HTML = """ """
 
@@ -82,19 +83,23 @@ INSTALLED_APPS = ["otree"]
 #DATABASE_URL = "postgres://postgres@localhost/django_db"
 #REDIS_URL = "redis://localhost:6379"
 
-"""environ["DATABASE_URL"] = "postgres://postgres@localhost/django_db"
-environ["REDIS_URL"] = "redis://localhost:6379"
+""""
 environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
 environ["OTREE_AUTH_LEVEL"] = "STUDY" 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/" """
 
-if environ.get('OTREE_PRODUCTION') not in {None, '', '0'}:
+
+#environ["DATABASE_URL"] = "postgres://postgres@localhost/django_db"
+#environ["REDIS_URL"] = "redis://localhost:6379"
+#environ["OTREE_AUTH_LEVEL"] = "STUDY"
+environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
+environ["OTREE_PRODUCTION"] = "0"
+ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")
+#PRODUCTION = 1
+
+if environ.get("OTREE_PRODUCTION") not in {None, "", "0"}:
     DEBUG = False
 else:
     DEBUG = True
-
-environ["OTREE_AUTH_LEVEL"] = "STUDY"
-environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
-PRODUCTION = 1

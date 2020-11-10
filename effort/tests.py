@@ -23,7 +23,9 @@ class PlayerBot(Bot):
                     pc_name=random.sample(Constants.pc_name_list_203, 1)[0][0]
                 )"""
             yield pages.Instructions1
-        yield Submission(pages.TaskStage, dict(point_score=str(int(numpy.random.normal(100, 15)))), check_html=False)
+        yield Submission(pages.TaskStage,
+                         dict(point_score=str(int(numpy.random.normal(100, 15)))),
+                         check_html=False)
 
         if self.round_number == 1:
             yield pages.Instructions2
