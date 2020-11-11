@@ -190,3 +190,33 @@
 2020-11-10 17:47:59 - INFO - self.round_number,  me, full loop repr == self.id: (3, <Player  1>, [<Player  2>])
 2020-11-10 17:47:59 - INFO -  self.round_number, me, all players: (3, <Player  2>, [[<Player  1>, <Player  2>]])
 2020-11-10 17:47:59 - INFO - self.round_number,  me, full loop repr == self.id: (3, <Player  2>, [<Player  1>])
+2020-11-11 18:08:29 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>)
+2020-11-11 18:08:29 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [<Player 30>, <Player  1>, <Player 16>])
+2020-11-11 18:08:29 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>)
+2020-11-11 18:08:29 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [<Player 30>, <Player  1>, <Player 16>])
+2020-11-11 18:31:43 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 18:31:43 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 18:31:44 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 18:31:44 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:02:20 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 19:02:20 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:02:20 - INFO - single player [[<Player 30>, <Player  1>, <Player 16>]]
+2020-11-11 19:02:20 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 19:02:20 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:02:20 - INFO - single player [[<Player 30>, <Player  1>, <Player 16>]]
+2020-11-11 19:06:09 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 19:06:09 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:06:09 - INFO - single player <IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>
+2020-11-11 19:06:09 - INFO - single player Player object (580)
+2020-11-11 19:06:09 - INFO - Query filtered : (<IdMapQuerySet [<Player 12>, <Player 10>]>, <IdMapQuerySet [<Player 26>, <Player 31>]>)
+2020-11-11 19:06:09 - INFO - Listed filter ([<Player 12>, <Player 10>], [<Player 26>, <Player 31>])
+2020-11-11 19:06:09 - INFO - single player <IdMapQuerySet [<Player 26>, <Player 31>]>
+2020-11-11 19:06:09 - INFO - single player Player object (576)
+2020-11-11 19:09:06 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 19:09:06 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:09:06 - INFO - single player <IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>
+2020-11-11 19:09:06 - INFO - fil[0].id 580
+2020-11-11 19:09:06 - INFO - Query filtered : (<IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>, <IdMapQuerySet []>)
+2020-11-11 19:09:06 - INFO - Listed filter ([<Player 30>, <Player  1>, <Player 16>], [])
+2020-11-11 19:09:06 - INFO - single player <IdMapQuerySet [<Player 30>, <Player  1>, <Player 16>]>
+2020-11-11 19:09:06 - INFO - fil[0].id 580

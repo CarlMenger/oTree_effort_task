@@ -134,7 +134,7 @@ class FinalResults(Page):
 page_sequence = [
     Intro,
     Questionnaire1,
-    TestDB,
+    #TestDB,
     Instructions1,
     Instructions1WaitPage,
     TaskStage,

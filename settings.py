@@ -91,11 +91,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/" """
 
 
-#environ["DATABASE_URL"] = "postgres://postgres@localhost/django_db"
-#environ["REDIS_URL"] = "redis://localhost:6379"
-#environ["OTREE_AUTH_LEVEL"] = "STUDY"
+environ["DATABASE_URL"] = "postgres://postgres@localhost/django_db"
+environ["REDIS_URL"] = "redis://localhost:6379"
+environ["OTREE_AUTH_LEVEL"] = "STUDY"
 environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
-environ["OTREE_PRODUCTION"] = "0"
+environ["OTREE_PRODUCTION"] = "1"
 ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")
 #PRODUCTION = 1
 
