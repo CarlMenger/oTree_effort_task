@@ -93,7 +93,12 @@ class Subsession(BaseSubsession):
             for p in self.get_players():
                 p.point_score_2 = p.point_score
                 p.overall_keystroke_count_2 = p.overall_keystroke_count
-            for p in self.get_players():  # Needs to finish assigning points before comparing
+            #if not self.session.config["use_csv_system"]:
+            if treatment == 0:
+                for p in self.get_players():  # Second loop because it needs to finish assigning points before comparing
+                    p.paired_player_round_2_points = p.get_player_object_by_t0id(
+                        p.in_round(2).id_of_paired_player).in_round(3).point_score_2
+            for p in self.get_players():  # Third loop because I probably cant code properly
                 p.compare_players()
 
     def test_db(self):
@@ -116,40 +121,36 @@ class Subsession(BaseSubsession):
             return [0.5, 0.5]
 
     def pair_players(self):
-        """ Main function.
+        """ Main function for round 2 only.
             pair players after first round (trial task) using 2 separate loops for T0 and T{x}
             """
         self.group_like_round(1)
         treatment = self.session.config["treatment"]
 
-        if self.round_number == 2:
-            if treatment == 0:
-                for player in self.get_players():
-                    player.t0_randomly_select_opponents()
-                    player.compare_players()
+        if treatment == 0:
+            for player in self.get_players():
+                player.t0_randomly_select_opponents()
+                player.compare_players()
 
-            else:
-                for player in self.get_players():
+        else:
+            for player in self.get_players():
+                if self.session.config["use_csv_system"]:
+                    player.pair_players_csv_system()
+                else:
                     player.find_score_position_options()
-
-    """         p1 = group.get_players()[0]
-                p2 = group.get_players()[1]
-                first_player_score_r2 = p1.get_player_point_score_in_rounds(1, 1)[0]
-                second_player_score_r2 = p2.get_player_point_score_in_rounds(1, 1)[0]
-                results = self.determine_winner(first_player_score_r2, second_player_score_r2)
-                p1.winning = results[0]
-                p2.winning = results[1]"""
 
     def create_record_files(self):
         """
-        1) create_score_records: make actual .csv and .js data set in app data folder
-
+        1) unload all data fields from different rounds into last round for DB (so round_number = self.round_numbers
+            has all data)
+        2) if enabled in settings: create_csv_files: make actual .csv and .json data files in app/data folder
                """
+
         timestr = time.strftime("%Y_%m_%d-%H_%M")
         file_dir = Constants.path
         treatment = self.session.config["treatment"]
 
-        def create_score_records():
+        def create_csv_files():
             player_info = {}
             df = pd.DataFrame()
             for player in self.get_players():
@@ -157,9 +158,16 @@ class Subsession(BaseSubsession):
                 player_info["treatment"] = treatment
                 player_info["gender"] = player.in_round(1).gender
 
-                player_info["point_score_0"] = player.in_round(1).point_score_0
+                """                player_info["point_score_0"] = player.in_round(1).point_score_0
                 player_info["point_score_1"] = player.in_round(2).point_score_1
-                player_info["point_score_2"] = player.in_round(3).point_score_2
+                player_info["point_score_2"] = player.in_round(3).point_score_2"""
+
+                player_info["point_score_0"] = player.point_score_0
+                player_info["point_score_1"] = player.point_score_1
+                player_info["point_score_2"] = player.point_score_2
+
+                player_info["paired_player_round_1_points"] = player.in_round(3).paired_player_round_1_points
+                player_info["paired_player_round_2_points"] = player.in_round(3).paired_player_round_2_points
 
                 player_info["overall_keystroke_count_0"] = player.in_round(1).overall_keystroke_count_0
                 player_info["overall_keystroke_count_1"] = player.in_round(2).overall_keystroke_count_1
@@ -179,8 +187,8 @@ class Subsession(BaseSubsession):
                 player_info = {}
 
             # csv generation
-            # if add_to_central_DB == 1, also update CSR (all sessions combined df)
-            if self.session.config["add_to_central_DB"] == 1:
+            # if use_csv_system == True, also update CSR (all sessions combined df)
+            if self.session.config["use_csv_system"]:
                 if not os.path.isfile(f"{file_dir}\\Central_Score_Records.json"):
                     df.to_json(f"{file_dir}\\Central_Score_Records.json")
                     df.to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
@@ -208,7 +216,7 @@ class Subsession(BaseSubsession):
                 p.overall_keystroke_count_1 = p.in_round(2).overall_keystroke_count_1
                 p.overall_keystroke_count_2 = p.in_round(3).overall_keystroke_count_2
                 p.paired_player_round_1_points = p.in_round(2).paired_player_round_1_points
-                p.paired_player_round_2_points = p.in_round(3).paired_player_round_1_points
+                p.paired_player_round_2_points = p.in_round(3).paired_player_round_2_points
                 p.winning_1 = p.in_round(2).winning_1
                 p.winning_2 = p.in_round(3).winning_2
                 p.my_player_id = p.in_round(2).my_player_id
@@ -217,9 +225,10 @@ class Subsession(BaseSubsession):
                 p.sa_options = p.in_round(2).sa_options
                 p.score_position = p.in_round(2).score_position
 
-        # In last round call to create dataframes and payfile
+        # In last round call to create data frames
         unload_data_into_round_3()
-        create_score_records()
+        if self.session.config["use_csv_system"]:
+            create_csv_files()
 
 
 class Group(BaseGroup):
@@ -243,7 +252,7 @@ class Player(BasePlayer):
     # General fields
     treatment = models.IntegerField()
     date = models.StringField()
-    label = models.StringField()  # REWRITE ME based on ztree version
+    label = models.StringField()  # REWRITE ME based on z-tree version
     winning_1 = models.PositiveIntegerField()
     winning_2 = models.PositiveIntegerField()
 
@@ -274,6 +283,13 @@ class Player(BasePlayer):
     Ts_score_difference = models.IntegerField()
     dir_path = models.StringField(initial=path)"""
 
+    def get_player_object_by_t0id(self, id):
+        for player_object in self.subsession.in_round(2).get_players():
+            #print(f"get_player_object_by_t0id: player_object, id {player_object.__repr__()[1:-1], id}")
+
+            if player_object.__repr__()[1:-1] == id:
+                return player_object
+
     def t0_randomly_select_opponents(self):
         """
         randomly choose from all players with id_of_paired_player == None, save "id" to player.id_of_paired_player,
@@ -281,50 +297,65 @@ class Player(BasePlayer):
 
         """
         # TODO: add assert
-        available_players = [player for player in self.get_others_in_subsession()]
-        player = random.sample(available_players, 1)[0]
-        self.id_of_paired_player = str(player.__repr__()[1:-1])
-        self.my_player_id = str(self.__repr__()[1:-1])
+        if self.id_of_paired_player is None:
+            available_players = [player for player in self.get_others_in_subsession() if
+                                 player.id_of_paired_player is None]
+            player = random.sample(available_players, 1)[0]
+            self.paired_player_round_1_points = player.point_score_1
+            self.id_of_paired_player = str(player.__repr__()[1:-1])
+            self.my_player_id = str(self.__repr__()[1:-1])
+            player.id_of_paired_player = self.my_player_id
+            player.my_player_id = self.id_of_paired_player
+            player.paired_player_round_1_points = self.in_round(2).point_score_1
 
     def tx_randomly_select_opponents(self, all_options, basic_query):
         allowed_ids = basic_query not in all_options
-        self.id_of_paired_player = str(random.sample(all_options, 1)[0])
+        self.id_of_paired_player = str(random.sample(allowed_ids, 1)[0])
 
     def compare_players(self):
+        """
+        Load up both paired players scores, compare them and set winning
+        :return: None
+        """
         # Look up player object based on .__repr__() saved in DB field
-        current_round = self.round_number
-        paired_player = [player for player in self.subsession.in_round(2).get_players() if
-                         player.__repr__()[1:-1] == self.in_round(2).id_of_paired_player][0]
-        # TODO> list out of range cuz different id 
-        if current_round == 2:
-            opponent_points = paired_player.point_score_1
-            self.paired_player_round_1_points = opponent_points
-            results = self.subsession.determine_winner(self.point_score_1, opponent_points)
+        if self.round_number == 2:
+            results = self.subsession.determine_winner(self.point_score_1, self.paired_player_round_1_points)
             self.winning_1 = results[0]
 
-        elif current_round == 3:
-            opponent_points = paired_player.in_round(3).point_score_2
-            self.paired_player_round_2_points = opponent_points
-            results = self.subsession.determine_winner(self.point_score_2, opponent_points)
-            self.winning_2 = results[0]
+        elif self.round_number == 3:
             self.total_points = self.in_round(2).point_score_1 + self.point_score_2
+            try:
+                results = self.subsession.determine_winner(self.total_points,
+                                                           self.in_round(2).paired_player_round_1_points +
+                                                           self.paired_player_round_2_points)
+            except TypeError:
+                results = self.subsession.determine_winner(self.total_points,
+                                                           self.in_round(2).paired_player_round_1_points +
+                                                           self.in_round(2).paired_player_round_2_points)
+
+            self.winning_2 = results[0]
 
     def find_score_position_options(self):
         """
         From DB find all options for sb_position, sa_position, write it into DB
-        :return:
+        :return: None
         """
         my_points = self.point_score_1
         spread = self.session.config["pairing_filter_margin"]
+        treatment = self.session.config["treatment"]
         basic_query = Player.objects.filter(treatment=self.in_round(1).treatment - 1,
                                             gender=self.in_round(1).gender,
                                             round_number=Constants.num_rounds,
                                             )
         # Looking for sb_option to:
         sb_options_q = basic_query.filter(point_score_1__range=[my_points + 1, my_points + spread])
+        if treatment == 2:
+            sb_options_q = sb_options_q.filter(winning_1=1)
         sb_options_ids = [option.id for option in sb_options_q]
         # Looking for sa_option to:
         sa_options_q = basic_query.filter(point_score_1__range=[my_points - spread, my_points - 1])
+        if treatment == 2:
+            sa_options_q = sa_options_q.filter(winning_1=0)
         sa_options_ids = [option.id for option in sa_options_q]
         all_options_dict = {"slightly_ahead": sa_options_ids, "slightly_behind": sb_options_ids}
         all_options = [*sa_options_ids, *sb_options_ids]
@@ -342,13 +373,7 @@ class Player(BasePlayer):
         self.winning_1 = paired_player_object.winning_1
         self.winning_2 = paired_player_object.winning_2
 
-    def choose_position_option(self):
-        """
-        Choose one index from either sa_position or sb_position. If there is no record in both options at the same time
-        choose index randomly but exclude any index from sb_option or sa_option.
-        :return:
-        """
-    def test_db_loading(self):
+    def test_db_loading(self):  # REWRITE ME: DELETE THIS AFTER TESTING
         def display_query_data():
             """ Query data from DB and return them in usable form """
             my_points = 90
@@ -390,33 +415,75 @@ class Player(BasePlayer):
     def participant_label(self):
         return self.participant.label
 
-    # FIXME: DELETE THIS AFTER TESTING
-    # list of points in paying rounds x to y, + 1 to keep pythonic indexing for rounds
-    def get_player_point_score_in_rounds(self, first_round, last_round):
-        return [in_paying_rounds.point_score for in_paying_rounds in
-                self.in_rounds(first_round + 1, last_round + 1)]
-
-    # FIXME: DELETE THIS AFTER TESTING
-    def get_pairs_after_trial_task_for_t1_t2(self, sub_table):
+    def pair_players_csv_system(self):
         """ Set id_of_paired_player, score_position and if possible sb_options + sa_options vars
             Called after trial task """
 
+        def load_csv_data():
+            """
+            Load .json file from BASE_DIR <data_folder>
+            :return: pandas data frame with important columns
+            """
+            wanted_data_columns = ["treatment", "gender", "point_score_1", "point_score_2", "winning_1", "winning_2", ]
+            file_dir = Constants.path
+            df_csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
+            sub_table = df_csr[wanted_data_columns].dropna()
+            return sub_table
+
+        def find_score_position_for_unmatched_players(my_score, spread):
+            """
+            Find score position for players not eligible for SB nor SA
+            :param my_score:
+            :param spread:
+            :return: None
+            """
+            if not self.score_position or self.score_position == "T0":
+                # FIXME: after testing delete error parts and simplify
+                if self.paired_player_round_1_points > my_score:
+                    if self.paired_player_round_1_points <= (my_score + spread):
+                        self.score_position = "error1"
+                    else:
+                        self.score_position = "far_behind"
+                elif self.paired_player_round_1_points < my_score:
+                    if self.paired_player_round_1_points >= (my_score - spread):
+                        self.score_position = "error2"
+                    else:
+                        self.score_position = "far_ahead"
+                else:
+                    self.score_position = "equal_position"
+
+            """
+                if self.paired_player_round_1_points > my_score:
+                        self.score_position = "far_behind"
+                elif self.paired_player_round_1_points < my_score:
+                        self.score_position = "far_ahead"
+                else:
+                    self.score_position = "equal_position"
+            """
+
         def pair_with_random_past_player(sub_table, position_options, disallowed_indexes):
+            """
+            Randomly search for index of player to be matched with
+            :param sub_table: pandas data frame with -g-t rows.
+            :param position_options:
+            :param disallowed_indexes: indexes of either SA or SB option, thus not eligible for random search
+            :return: None
+            """
             index_all = sub_table.index.tolist()
             all_disallowed_indexes = disallowed_indexes + list(position_options.values())
             flat_list = [item for sublist in all_disallowed_indexes for item in sublist]
             index_clean = [index for index in index_all if index not in flat_list]  # FIXME: assert for empty list?
             opponent_index = random.sample(index_clean, 1)[0]
-            self.id_of_paired_player = opponent_index
-            #print(f"{self.participant_label()} says: I was randomly matched")
+            self.id_of_paired_player = str(opponent_index)
+            print(f"{self.participant_label()} says: I was randomly matched")
 
         def find_score_position(sub_table):
             disallowed_indexes = []
             position_options = {"slightly_behind": [],
                                 "slightly_ahead": [],
                                 }
-            sub_table = sub_table[sub_table["treatment"] == (self.session.config["treatment"] - 1)] # FIXME: do this with Qset beforehand
-            sub_table = sub_table[sub_table["gender"] == self.in_round(1).gender]  # FIXME: do this with Qset beforehand
+            sub_table = sub_table[sub_table["treatment"] == (self.session.config["treatment"] - 1)]
+            sub_table = sub_table[sub_table["gender"] == self.in_round(1).gender]
 
             # SB filtering #
             filtered_table = sub_table[sub_table["point_score_1"] > my_score]
@@ -428,7 +495,7 @@ class Player(BasePlayer):
             if len(filtered_table.index.tolist()):  # at least one match in SB
                 position_options["slightly_behind"] = filtered_table.index.tolist()
                 self.sb_options = str(filtered_table.index.tolist())[1:-1]
-                #print(f"{self.participant_label()} says: I found SB position")
+                print(f"{self.participant_label()} says: I found SB position")
 
             # SA filtering #
             filtered_table = sub_table[sub_table["point_score_1"] < my_score]
@@ -441,54 +508,26 @@ class Player(BasePlayer):
             if len(filtered_table.index.tolist()):  # at least one match in SA
                 position_options["slightly_ahead"] = filtered_table.index.tolist()
                 self.sa_options = str(filtered_table.index.tolist())[1:-1]
-                #print(f"{self.participant_label()} says: I found SA position")
+                print(f"{self.participant_label()} says: I found SA position")
 
             if len(position_options["slightly_behind"]) > 0 and len(position_options["slightly_ahead"]) > 0:
                 # Save results to player attributes
                 self.score_position = str(random.sample(position_options.keys(), 1)[0])
-                self.id_of_paired_player = int(random.sample(position_options[self.score_position], 1)[0])
+                self.id_of_paired_player = str(random.sample(position_options[self.score_position], 1)[0])
                 #print(f"{self.participant_label()} says: I found SB and SA position {self.id_of_paired_player}")
 
             else:
+                print(sub_table.to_string())
                 pair_with_random_past_player(sub_table, position_options, disallowed_indexes)
 
-
+        # Init basic data
         spread = int(self.session.config["pairing_filter_margin"])
-        my_score = (self.get_player_point_score_in_rounds(1, 1))[0]
+        my_score = self.in_round(2).point_score
+
+        # Main part of function
+        sub_table = load_csv_data()
         find_score_position(sub_table)
-        pp_r1 = sub_table.loc[self.id_of_paired_player]["point_score_1"]
-        pp_r2 = sub_table.loc[self.id_of_paired_player]["point_score_2"]
-
-        # Add points of paired player to self.attributes and winning_1 to records
-        self.paired_past_player_round_1_points = pp_r1
-        self.paired_past_player_round_2_points = pp_r2
-        self.calculate_winner_t1_t2_for_rounds(1, 1)
-
-        if not self.score_position or self.score_position == "T0":
-            # FIXME: after testing delete error parts and simplify
-            if pp_r1 > my_score:
-                if pp_r1 <= (my_score + spread):
-                    self.score_position = "error1"
-                else:
-                    self.score_position = "far_behind"
-            elif pp_r1 < my_score:
-                if pp_r1 >= (my_score - spread):
-                    self.score_position = "error2"
-                else:
-                    self.score_position = "far_ahead"
-            else:
-                self.score_position = "equal_position"
-
-    # FIXME: DELETE THIS AFTER TESTING replaced by compare_players()
-    def calculate_winner_t1_t2_for_rounds(self, round_1, round_2):
-        """Calculate winner in non-trial rounds for T1 and T2 only"""
-        my_points = sum(self.get_player_point_score_in_rounds(round_1, round_2))
-        self.total_points = my_points
-        assert (0 < round_1 < 3), "Function calculate_winner_t1_t2_for_rounds received false argument #1 "
-        assert (0 < round_2 < 3 and round_1 <= round_2), \
-            "Function calculate_winner_t1_t2_for_rounds received false argument #2 or #1 > #2"
-        past_player_points = self.in_round(2).paired_past_player_round_1_points + \
-                             self.in_round(2).paired_past_player_round_2_points * (round_2 - round_1)
-        self.winning = self.subsession.determine_winner(my_points, past_player_points)[0]
-
-
+        self.paired_player_round_1_points = sub_table.loc[int(self.id_of_paired_player)]["point_score_1"]
+        self.paired_player_round_2_points = sub_table.loc[int(self.id_of_paired_player)]["point_score_2"]
+        find_score_position_for_unmatched_players(my_score, spread)
+        self.compare_players()

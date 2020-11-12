@@ -9,9 +9,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # e.g. self.session.config["participation_fee"]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=0.00, participation_fee=0.00, doc="", use_browser_bots=True, conversion_rate=0.00,
-    winning_bonus=50.00, resultsPage_timeout=30, generate_payfile=False, use_db=True,
-    add_to_central_DB=True,
+    real_world_currency_per_point=0.00,
+    participation_fee=0.00, doc="",
+    use_browser_bots=True,
+    winning_bonus=50.00,
+    resultsPage_timeout=30,
+    use_csv_system=True,
 
 )
 
