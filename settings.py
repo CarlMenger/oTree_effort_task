@@ -15,6 +15,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     winning_bonus=50.00,
     resultsPage_timeout=30,
     use_csv_system=True,
+    testing=False,
 
 )
 

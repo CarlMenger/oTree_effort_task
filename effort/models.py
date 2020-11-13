@@ -175,7 +175,9 @@ class Subsession(BaseSubsession):
                 player_info["slightly_behind"] = player.sb_options
                 player_info["slightly_ahead"] = player.sa_options
                 player_info["score_position"] = player.score_position
+
                 player_info["spread"] = player.session.config["pairing_filter_margin"]
+                player_info["testing"] = player.session.config["testing"]
 
                 df = df.append(player_info, ignore_index=True)
                 player_info = {}
