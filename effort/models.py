@@ -56,8 +56,8 @@ class Constants(BaseConstants):
         "equal_position": "You have the same score as your opponent",
         "T0": ""  # Placeholder for T0 so it doesnt raise error
     }
-    pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]     # FIXME: DELETE THIS AFTER TESTING
-    pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]     # FIXME: DELETE THIS AFTER TESTING
+    #pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]     # FIXME: DELETE THIS AFTER TESTING
+    #pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]     # FIXME: DELETE THIS AFTER TESTING
     date_time = time.asctime(time.localtime(time.time()))
     results_page_timeout_seconds = 30
     task_stage_timeout_seconds = 35  # 30 sec game time + 5 sec prep time
@@ -66,10 +66,7 @@ class Constants(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    """    def get_treatment(self):
-            return self.session.config["treatment"]
-        t = get_treatment()
-        treatment = models.IntegerField(initial=t)"""
+
     dir_path = models.StringField(initial=Constants.path)
 
     def after_task_stage(self):
@@ -93,7 +90,6 @@ class Subsession(BaseSubsession):
             for p in self.get_players():
                 p.point_score_2 = p.point_score
                 p.overall_keystroke_count_2 = p.overall_keystroke_count
-            #if not self.session.config["use_csv_system"]:
             if treatment == 0:
                 for p in self.get_players():  # Second loop because it needs to finish assigning points before comparing
                     p.paired_player_round_2_points = p.get_player_object_by_t0id(
@@ -156,32 +152,30 @@ class Subsession(BaseSubsession):
             for player in self.get_players():
                 player_info["date"] = timestr
                 player_info["treatment"] = treatment
-                player_info["gender"] = player.in_round(1).gender
-
-                """                player_info["point_score_0"] = player.in_round(1).point_score_0
-                player_info["point_score_1"] = player.in_round(2).point_score_1
-                player_info["point_score_2"] = player.in_round(3).point_score_2"""
+                player_info["gender"] = player.gender
+                player_info["label"] = player.in_round(1).label
 
                 player_info["point_score_0"] = player.point_score_0
                 player_info["point_score_1"] = player.point_score_1
                 player_info["point_score_2"] = player.point_score_2
 
-                player_info["paired_player_round_1_points"] = player.in_round(3).paired_player_round_1_points
-                player_info["paired_player_round_2_points"] = player.in_round(3).paired_player_round_2_points
+                player_info["paired_player_round_1_points"] = player.paired_player_round_1_points
+                player_info["paired_player_round_2_points"] = player.paired_player_round_2_points
 
-                player_info["overall_keystroke_count_0"] = player.in_round(1).overall_keystroke_count_0
-                player_info["overall_keystroke_count_1"] = player.in_round(2).overall_keystroke_count_1
-                player_info["overall_keystroke_count_2"] = player.in_round(3).overall_keystroke_count_2
+                player_info["overall_keystroke_count_0"] = player.overall_keystroke_count_0
+                player_info["overall_keystroke_count_1"] = player.overall_keystroke_count_1
+                player_info["overall_keystroke_count_2"] = player.overall_keystroke_count_2
 
-                player_info["winning_1"] = player.in_round(2).winning_1
-                player_info["winning_2"] = player.in_round(3).winning_2
+                player_info["winning_1"] = player.winning_1
+                player_info["winning_2"] = player.winning_2
 
-                player_info["my_player_id"] = player.in_round(2).my_player_id
-                player_info["index_of_paired_player"] = player.in_round(2).id_of_paired_player
+                player_info["my_player_id"] = player.my_player_id
+                player_info["index_of_paired_player"] = player.id_of_paired_player
 
-                player_info["slightly_behind"] = player.in_round(2).sb_options
-                player_info["slightly_ahead"] = player.in_round(2).sa_options
-                player_info["score_position"] = player.in_round(2).score_position
+                player_info["slightly_behind"] = player.sb_options
+                player_info["slightly_ahead"] = player.sa_options
+                player_info["score_position"] = player.score_position
+                player_info["spread"] = player.session.config["pairing_filter_margin"]
 
                 df = df.append(player_info, ignore_index=True)
                 player_info = {}
@@ -194,9 +188,8 @@ class Subsession(BaseSubsession):
                     df.to_excel(f"{file_dir}\\Central_Score_Records.xlsx", engine="xlsxwriter")
                 else:
                     csr = pd.read_json(f"{file_dir}\\Central_Score_Records.json")
-                    # TODO?: concat(keys=treatments),
                     df.reset_index(inplace=True, drop=True)
-                    csr.reset_index(inplace=True, drop=True)  # TODO: now to check if it does not fuck up previous csr
+                    csr.reset_index(inplace=True, drop=True)
                     pd.concat([csr, df], ignore_index=True).to_json(f"{file_dir}\\Central_Score_Records.json")
                     pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx",
                                                                      engine="xlsxwriter")
@@ -224,6 +217,7 @@ class Subsession(BaseSubsession):
                 p.sb_options = p.in_round(2).sb_options
                 p.sa_options = p.in_round(2).sa_options
                 p.score_position = p.in_round(2).score_position
+                p.payoff = p.winning_2 * self.session.config["winning_bonus"]
 
         # In last round call to create data frames
         unload_data_into_round_3()
@@ -241,18 +235,11 @@ class Player(BasePlayer):
                                  choices=[
                                      [0, "male"],
                                      [1, "female"],
-                                 ]
-                                 )
-    # FIXME: DELETE THIS AFTER TESTING
-    """    room_name = models.IntegerField(choices=[ 
-        [203, " VT 203 "],
-        [205, " VT 205 "]
-    ]
-    )"""
+                                 ])
     # General fields
     treatment = models.IntegerField()
     date = models.StringField()
-    label = models.StringField()  # REWRITE ME based on z-tree version
+    label = models.StringField()
     winning_1 = models.PositiveIntegerField()
     winning_2 = models.PositiveIntegerField()
 
@@ -276,17 +263,9 @@ class Player(BasePlayer):
     sb_options = models.StringField()
     sa_options = models.StringField()
     score_position = models.StringField(initial="T0")
-    # DEBUG ONLY
-    # FIXME: DELETE THIS AFTER TESTING
-    """    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    path = os.path.join(BASE_DIR, "effort", "data")
-    Ts_score_difference = models.IntegerField()
-    dir_path = models.StringField(initial=path)"""
 
     def get_player_object_by_t0id(self, id):
         for player_object in self.subsession.in_round(2).get_players():
-            #print(f"get_player_object_by_t0id: player_object, id {player_object.__repr__()[1:-1], id}")
-
             if player_object.__repr__()[1:-1] == id:
                 return player_object
 
@@ -296,7 +275,6 @@ class Player(BasePlayer):
         set player.paired_player_round_1_points
 
         """
-        # TODO: add assert
         if self.id_of_paired_player is None:
             available_players = [player for player in self.get_others_in_subsession() if
                                  player.id_of_paired_player is None]
@@ -472,7 +450,7 @@ class Player(BasePlayer):
             index_all = sub_table.index.tolist()
             all_disallowed_indexes = disallowed_indexes + list(position_options.values())
             flat_list = [item for sublist in all_disallowed_indexes for item in sublist]
-            index_clean = [index for index in index_all if index not in flat_list]  # FIXME: assert for empty list?
+            index_clean = [index for index in index_all if index not in flat_list]
             opponent_index = random.sample(index_clean, 1)[0]
             self.id_of_paired_player = str(opponent_index)
             print(f"{self.participant_label()} says: I was randomly matched")

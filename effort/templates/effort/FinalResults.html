@@ -14,13 +14,19 @@
 </style>
 
     <p>
-        Good job, you've made it to the end of this experiment but the session is not over yet. You have scored
+        Good job, you've made it to the end. You have scored
         {{ point_score_1 }} and {{ point_score_2 }} points. ({{ total_points }} points combined).
-        Results of this part will be revealed to you at the end of the session. Monetary reward from this experiment
-        will be automatically added to your final reward for participating.
+
+        {% if payoff > 0 %}
+        Congratulations, you have won.
+        {% else %}
+        Unfortunately, you have lost.
+        {% endif %}
+        For this experiment you have earned additional {{ payoff }}.
+        Reward from this experiment will be automatically added to your final reward for participating.
     </p>
     <p>
-    Please exit the browser to continue the session.
+    Please exit the browser to end the experiment.
     </p>
 
 

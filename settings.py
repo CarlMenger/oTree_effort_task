@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.00,
     participation_fee=0.00, doc="",
-    use_browser_bots=True,
+    use_browser_bots=False,
     winning_bonus=50.00,
     resultsPage_timeout=30,
     use_csv_system=True,
@@ -25,6 +25,7 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=0,
+        pairing_filter_margin=None,
 
     ),
     dict(

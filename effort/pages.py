@@ -87,6 +87,7 @@ class Instructions2WaitPage(WaitPage):
 
 class Results(Page):
     form_model = "player"
+    wait_for_all_players = True
 
     def is_displayed(self):
         return self.round_number > 1 and self.round_number != Constants.num_rounds
@@ -99,16 +100,6 @@ class Results(Page):
 
     def get_timeout_seconds(self):
         return Constants.results_page_timeout_seconds
-
-
-class ResultsWaitPage(WaitPage):  # FIXME: Am i needed?
-    def is_displayed(self):
-        return self.round_number > 1 and self.round_number != Constants.num_rounds
-
-    def get_timeout_seconds(self):
-        return self.session.config["waitPageTimeout"]
-
-    wait_for_all_groups = True
 
 
 class GenerateFiles(WaitPage):
@@ -128,6 +119,7 @@ class FinalResults(Page):
         return dict(point_score_1=self.player.in_round(2).point_score_1,
                     point_score_2=self.player.in_round(3).point_score_2,
                     total_points=self.player.total_points,
+                    payoff=self.player.payoff,
                     )
 
 
@@ -143,7 +135,6 @@ page_sequence = [
     Instructions2,
     Instructions2WaitPage,
     Results,
-    #ResultsWaitPage,
     GenerateFiles,
     FinalResults,
 
