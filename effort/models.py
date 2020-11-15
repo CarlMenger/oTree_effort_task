@@ -279,7 +279,7 @@ class Player(BasePlayer):
         """
         if self.id_of_paired_player is None:
             available_players = [player for player in self.get_others_in_subsession() if
-                                 player.id_of_paired_player is None and self.gender == player.gender]
+                                 player.id_of_paired_player is None and self.in_round(1).gender == player.in_round(1).gender]
             player = random.sample(available_players, 1)[0]
             self.paired_player_round_1_points = player.point_score_1
             self.id_of_paired_player = str(player.__repr__()[1:-1])
@@ -287,6 +287,7 @@ class Player(BasePlayer):
             player.id_of_paired_player = self.my_player_id
             player.my_player_id = self.id_of_paired_player
             player.paired_player_round_1_points = self.in_round(2).point_score_1
+
 
     def tx_randomly_select_opponents(self, all_options, basic_query):
         allowed_ids = basic_query not in all_options
