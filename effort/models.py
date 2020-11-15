@@ -279,7 +279,7 @@ class Player(BasePlayer):
         """
         if self.id_of_paired_player is None:
             available_players = [player for player in self.get_others_in_subsession() if
-                                 player.id_of_paired_player is None]
+                                 player.id_of_paired_player is None and self.gender == player.gender]
             player = random.sample(available_players, 1)[0]
             self.paired_player_round_1_points = player.point_score_1
             self.id_of_paired_player = str(player.__repr__()[1:-1])
