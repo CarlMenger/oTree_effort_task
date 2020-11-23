@@ -76,7 +76,9 @@ class Instructions2(Page):
 
     def vars_for_template(self):
         return dict(winning_reward=int(self.session.config["winning_bonus"]),
-                    treatment=self.session.config["treatment"])
+                    treatment=self.session.config["treatment"],
+                    gender=self.player.in_round(1).gender,
+                    )
 
 
 class Instructions2WaitPage(WaitPage):

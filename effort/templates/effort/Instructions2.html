@@ -7,63 +7,41 @@
 
 {% block content %}
 <div>
+    <p>
+        In the rest of this experiment, you will be paired with another participant who is the same gender as you.
+        This part will consist of two identical rounds just like the one you just finished.
+        Each round will take 30 seconds.
+        Your task remains to press a and b in alternating fashion.
+        You will be awarded 1 point for every correct sequence.
+    </p>
     {% if treatment == 1 %}
     <p>
-
-        In the next part, you will be divided randomly into pairs. This part will consist
-        of two identical rounds just
-        like the one you just finished. Each round will take 30 seconds. Your task
-        remains to press A and B according
-        to sequence displayed on the display. You will be awarded a point for every
-        correct sequence. After the first
-        round, you will be shown your results, including information about your position
+        After the first round, you will be shown your results, including information about your position
         relative to your opponent. Your opponent did not receive any information about
-        his/her relative standing.
-        After the second round, you will see a summary of points you scored. If your sum
-        of points from both rounds is
-        higher than that of your partner, you will receive the reward of 50 CZK,
-        otherwise you will receive 0 CZK.
-
+        {% if gender == 0 %} his
+        {% elif gender == 1 %} her
+        {% endif %}
+        relative standing.
     </p>
     {% elif treatment == 2 %}
     <p>
-
-        In the next part, you will be divided randomly into pairs. This part will consist
-        of two identical rounds just
-        like the one you just finished. Each round will take 30 seconds.
-        Your task remains to press A and B according to sequence displayed on the
-        display.
-        You
-        will be awarded a point for every correct sequence. After the first round, you
-        will be shown your results,
-        including information about your position relative to your opponent. Your
-        opponent
-        received information about his/her relative standing. After
-        the second round, you will see a summary of points you scored. If your sum of points
-        from both rounds is
-        higher than that of your partner, you will receive the reward of 50 CZK,
-        otherwise you will receive 0 CZK.
-
-
-
+        After the first round, you will be shown your results, including information about your position
+        relative to your opponent. Your opponent received information about
+        {% if gender == 0 %} his
+        {% elif gender == 1 %} her
+        {% endif %}
+        relative standing.
     </p>
     {% else %}
     <p>
-        In the rest of this experiment, you will be paired with another participant who
-        is sitting in this room. This
-        part will consist of two identical rounds just like the one you just finished.
-        Each round will take 30 seconds.
-        Your task is to press a and b alternatively. You will be awarded a point for
-        every correct sequence. After the
-        each round, you will be shown a table with a summary of your results. If your sum
-        of points from both rounds is
-        higher than that of your partner, you will receive the reward of {{ winning_reward }} CZK,
-        otherwise you will receive 0 CZK. You
-        will receive the information about whether you won or lost at the end of the
-        experimental session.
-
+        After the first round, you will be shown your results.
     </p>
-{% endif %}
+    {% endif %}
+    <p>
+        After the second round, you will see a summary of points you scored. If your sum of points from both rounds
+        is higher than that of your opponent, you will receive reward of 50 CZK, otherwise you will receive 0 CZK.
+        You will receive information whether you have won or lost at the end of the experimental session.
+    </p>
 </div>
 <br>
 <button class="otree-btn-next btn btn-primary next-button otree-next-button"> I AM READY</button>

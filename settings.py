@@ -35,7 +35,7 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=1,
-        pairing_filter_margin=2,
+        pairing_filter_margin=1,
 
     ),
     dict(
@@ -44,7 +44,7 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
         app_sequence=['effort'],
         treatment=2,
-        pairing_filter_margin=2,
+        pairing_filter_margin=1,
 
     ),
     dict(

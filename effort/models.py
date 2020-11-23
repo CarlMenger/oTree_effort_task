@@ -46,7 +46,7 @@ Separate players based on real effort task and gender into groups competing agai
 
 class Constants(BaseConstants):
     name_in_url = "StopLookingAtUrl"
-    players_per_group = 2
+    players_per_group = None
     num_rounds = 3
     all_score_positions = {
         "slightly_ahead": "You are slightly ahead in score compared to your opponent",
@@ -56,8 +56,6 @@ class Constants(BaseConstants):
         "equal_position": "You have the same score as your opponent",
         "T0": ""  # Placeholder for T0 so it doesnt raise error
     }
-    #pc_name_list_205 = [[i, f"VT_205 - {i}"] for i in range(1, 19)]     # FIXME: DELETE THIS AFTER TESTING
-    #pc_name_list_203 = [[i, f"VT_203 - {i}"] for i in range(1, 25)]     # FIXME: DELETE THIS AFTER TESTING
     date_time = time.asctime(time.localtime(time.time()))
     results_page_timeout_seconds = 30
     task_stage_timeout_seconds = 35  # 30 sec game time + 5 sec prep time
@@ -278,9 +276,15 @@ class Player(BasePlayer):
 
         """
         if self.id_of_paired_player is None:
-            available_players = [player for player in self.get_others_in_subsession() if
-                                 player.id_of_paired_player is None and self.in_round(1).gender == player.in_round(1).gender]
-            player = random.sample(available_players, 1)[0]
+            try:
+                available_players = [player for player in self.get_others_in_subsession() if
+                                     player.id_of_paired_player is None and self.in_round(1).gender == player.in_round(
+                                         1).gender]
+                player = random.sample(available_players, 1)[0]
+            except ValueError:  # if you get unbalanced uneven genders, pair with already paired guy
+                available_players = [player for player in self.get_others_in_subsession() if
+                                     self.in_round(1).gender == player.in_round(1).gender]
+                player = random.sample(available_players, 1)[0]
             self.paired_player_round_1_points = player.point_score_1
             self.id_of_paired_player = str(player.__repr__()[1:-1])
             self.my_player_id = str(self.__repr__()[1:-1])
@@ -288,9 +292,8 @@ class Player(BasePlayer):
             player.my_player_id = self.id_of_paired_player
             player.paired_player_round_1_points = self.in_round(2).point_score_1
 
-
-    def tx_randomly_select_opponents(self, all_options, basic_query):
-        allowed_ids = basic_query not in all_options
+    def tx_randomly_select_opponents(self, restricted_options, basic_query):
+        allowed_ids = basic_query not in restricted_options
         self.id_of_paired_player = str(random.sample(allowed_ids, 1)[0])
 
     def compare_players(self):
@@ -414,7 +417,7 @@ class Player(BasePlayer):
         def find_score_position_for_unmatched_players(my_score, spread):
             """
             Find score position for players not eligible for SB nor SA
-            :param my_score:
+            :param my_score: self.point_score_1
             :param spread:
             :return: None
             """
