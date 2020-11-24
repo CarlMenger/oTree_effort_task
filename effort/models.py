@@ -232,7 +232,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 
-    hroot_id = models.StringField()
+    hroot_id = models.StringField(label="Unique ID")
     gender = models.IntegerField(widget=widgets.RadioSelect,
                                  choices=[
                                      [0, "male"],
