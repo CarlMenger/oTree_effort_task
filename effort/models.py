@@ -218,6 +218,7 @@ class Subsession(BaseSubsession):
                 p.sa_options = p.in_round(2).sa_options
                 p.score_position = p.in_round(2).score_position
                 p.payoff = p.winning_2 * self.session.config["winning_bonus"]
+                p.participant.label = p.in_round(1).hroot_id
 
         # In last round call to create data frames
         unload_data_into_round_3()
@@ -231,6 +232,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 
+    hroot_id = models.StringField()
     gender = models.IntegerField(widget=widgets.RadioSelect,
                                  choices=[
                                      [0, "male"],
@@ -459,7 +461,7 @@ class Player(BasePlayer):
             index_clean = [index for index in index_all if index not in flat_list]
             opponent_index = random.sample(index_clean, 1)[0]
             self.id_of_paired_player = str(opponent_index)
-            print(f"{self.participant_label()} says: I was randomly matched")
+            #print(f"{self.participant_label()} says: I was randomly matched")
 
         def find_score_position(sub_table):
             disallowed_indexes = []
@@ -479,7 +481,7 @@ class Player(BasePlayer):
             if len(filtered_table.index.tolist()):  # at least one match in SB
                 position_options["slightly_behind"] = filtered_table.index.tolist()
                 self.sb_options = str(filtered_table.index.tolist())[1:-1]
-                print(f"{self.participant_label()} says: I found SB position")
+                #print(f"{self.participant_label()} says: I found SB position")
 
             # SA filtering #
             filtered_table = sub_table[sub_table["point_score_1"] < my_score]
@@ -492,7 +494,7 @@ class Player(BasePlayer):
             if len(filtered_table.index.tolist()):  # at least one match in SA
                 position_options["slightly_ahead"] = filtered_table.index.tolist()
                 self.sa_options = str(filtered_table.index.tolist())[1:-1]
-                print(f"{self.participant_label()} says: I found SA position")
+                #print(f"{self.participant_label()} says: I found SA position")
 
             if len(position_options["slightly_behind"]) > 0 and len(position_options["slightly_ahead"]) > 0:
                 # Save results to player attributes
@@ -501,7 +503,7 @@ class Player(BasePlayer):
                 #print(f"{self.participant_label()} says: I found SB and SA position {self.id_of_paired_player}")
 
             else:
-                print(sub_table.to_string())
+                #print(sub_table.to_string())
                 pair_with_random_past_player(sub_table, position_options, disallowed_indexes)
 
         # Init basic data

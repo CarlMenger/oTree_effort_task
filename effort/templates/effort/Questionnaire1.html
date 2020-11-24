@@ -10,10 +10,12 @@
 <div>
     <table class="table">
         <tr>
-            <td>Please indicate your gender (the same you indicated in hroot).</td>
-            <td>
-                {% formfield player.gender %}
-            </td>
+            <td> Please indicate your gender (the same you indicated in hroot): </td>
+            <td> {% formfield player.gender %} </td>
+        </tr>
+        <tr>
+            <td> Please type in your Unique ID you received in your invitation mail: </td>
+            <td> {% formfield player.hroot_id %} </td>
         </tr>
 
 

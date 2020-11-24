@@ -21,7 +21,7 @@ class Intro(Page):
 
 class Questionnaire1(Page):
     form_model = "player"
-    form_fields = ["gender", ]
+    form_fields = ["gender", "hroot_id"]
 
     def is_displayed(self):
         return self.round_number == 1

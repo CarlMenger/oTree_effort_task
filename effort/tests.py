@@ -12,7 +12,7 @@ class PlayerBot(Bot):
         if self.round_number == 1:
             yield pages.Intro
             yield pages.Questionnaire1, dict(gender=str(*random.sample([0, 1],1)),
-                                             ),
+                                             hroot_id="I am a bot, Beep boop."),
             yield pages.Instructions1
         yield Submission(pages.TaskStage,
                          dict(point_score=str(int(numpy.random.normal(100, 15)))),
