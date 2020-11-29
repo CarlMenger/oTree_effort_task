@@ -17,7 +17,7 @@
     {% if treatment == 1 %}
     <p>
         After the first round, you will be shown your results, including information about your position
-        relative to your opponent. Your opponent did not receive any information about
+        relative to your opponent. Your opponent <b>did not receive</b> any information about
         {% if gender == 0 %} his
         {% elif gender == 1 %} her
         {% endif %}
@@ -26,7 +26,7 @@
     {% elif treatment == 2 %}
     <p>
         After the first round, you will be shown your results, including information about your position
-        relative to your opponent. Your opponent received information about
+        relative to your opponent. Your opponent <b>received</b> information about
         {% if gender == 0 %} his
         {% elif gender == 1 %} her
         {% endif %}

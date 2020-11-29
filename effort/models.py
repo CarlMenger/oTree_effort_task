@@ -194,8 +194,8 @@ class Subsession(BaseSubsession):
                     pd.concat([csr, df], ignore_index=True).to_excel(f"{file_dir}\\Central_Score_Records.xlsx",
                                                                      engine="xlsxwriter")
 
-            # Always create session records
-            df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
+            #  create single session records
+            #df.to_excel(f"{file_dir}\\score_records__T{treatment}__{timestr}.xlsx", engine='xlsxwriter')
 
         def unload_data_into_round_3():
             for p in self.get_players():
