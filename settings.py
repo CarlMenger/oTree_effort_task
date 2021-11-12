@@ -80,7 +80,7 @@ ADMIN_USERNAME = "admin"
 
 DEMO_PAGE_INTRO_HTML = """ """
 
-SECRET_KEY = "#n38c)phqy1^2qhv8pk18i_3v9b%#n+*y__@611$a+s#$&a4ao"
+SECRET_KEY = "redacted"
 
 # if an app is included in SESSION_CONFIGS, you don"t need to list it here
 INSTALLED_APPS = ["otree"]
@@ -89,7 +89,7 @@ INSTALLED_APPS = ["otree"]
 #REDIS_URL = "redis://localhost:6379"
 
 """"
-environ["OTREE_ADMIN_PASSWORD"] = "odraSe5ku"
+environ["OTREE_ADMIN_PASSWORD"] = "redacted"
 environ["OTREE_AUTH_LEVEL"] = "STUDY" 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/effort/data")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
